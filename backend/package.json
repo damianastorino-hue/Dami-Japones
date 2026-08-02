@@ -1,0 +1,15 @@
+{
+  "name": "dojo-sombras-backend",
+  "version": "1.0.0",
+  "description": "Backend de sincronización para el Dojo de las Sombras (usuario único)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.22.2"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
