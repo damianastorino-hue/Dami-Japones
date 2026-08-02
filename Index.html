@@ -1,0 +1,1276 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>影の道場 · Dojo de las Sombras</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Noto+Sans+JP:wght@400;700;900&family=Zen+Kaku+Gothic+New:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0e1a; --bg2:#111827; --panel:#141b2e; --panel2:#1a2338;
+  --ink:#e8ecf5; --dim:#8b96b0; --line:#26304a;
+  --purple:#8b5cf6; --purple-glow:#a78bfa; --violet-deep:#6d28d9;
+  --cyan:#22d3ee; --gold:#fbbf24; --rose:#fb7185;
+  --green:#34d399; --red:#f87171;
+  --shadow-energy:#7c3aed;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{
+  font-family:'Zen Kaku Gothic New','Noto Sans JP',system-ui,sans-serif;
+  background:var(--bg); color:var(--ink);
+  overflow-x:hidden; position:relative; min-height:100vh;
+}
+/* Fondo animado: bruma de energía sombra */
+body::before{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(124,58,237,.35), transparent 60%),
+    radial-gradient(ellipse 60% 40% at 90% 20%, rgba(34,211,238,.10), transparent 55%),
+    radial-gradient(ellipse 70% 50% at 10% 90%, rgba(139,92,246,.18), transparent 60%),
+    linear-gradient(180deg,#0a0e1a 0%,#0c1122 50%,#0a0e1a 100%);
+}
+/* particulas flotantes */
+.embers{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.ember{position:absolute;bottom:-10px;width:3px;height:3px;border-radius:50%;
+  background:var(--purple-glow);box-shadow:0 0 6px 2px rgba(167,139,250,.7);
+  animation:rise linear infinite;opacity:0}
+@keyframes rise{
+  0%{transform:translateY(0) translateX(0);opacity:0}
+  10%{opacity:.9}
+  90%{opacity:.6}
+  100%{transform:translateY(-105vh) translateX(var(--drift));opacity:0}
+}
+#app{position:relative;z-index:1;max-width:520px;margin:0 auto;min-height:100vh;
+  display:flex;flex-direction:column;padding:0 16px}
+.wrap{flex:1;display:flex;flex-direction:column;padding:14px 0 96px}
+
+/* Header */
+header{display:flex;align-items:center;justify-content:space-between;
+  padding:14px 4px 10px;position:sticky;top:0;z-index:20;
+  background:linear-gradient(180deg,var(--bg) 60%,transparent);
+  backdrop-filter:blur(4px)}
+.brand{display:flex;flex-direction:column;line-height:1}
+.brand .jp{font-family:'Zen Kaku Gothic New';font-weight:900;font-size:19px;
+  background:linear-gradient(90deg,#a78bfa,#22d3ee);-webkit-background-clip:text;background-clip:text;color:transparent;
+  letter-spacing:1px}
+.brand .sub{font-family:'Cinzel',serif;font-size:9.5px;color:var(--dim);letter-spacing:3px;margin-top:3px;text-transform:uppercase}
+.hstats{display:flex;gap:8px;align-items:center}
+.chip{display:flex;align-items:center;gap:5px;background:var(--panel);
+  border:1px solid var(--line);border-radius:999px;padding:6px 11px;font-weight:700;font-size:13px}
+.chip.streak{color:var(--rose);border-color:rgba(251,113,133,.4)}
+.chip.xp{color:var(--gold);border-color:rgba(251,191,36,.4)}
+
+/* Cards */
+.card{background:linear-gradient(160deg,var(--panel),var(--panel2));
+  border:1px solid var(--line);border-radius:20px;padding:20px;
+  box-shadow:0 8px 30px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.03)}
+.card.glow{border-color:rgba(139,92,246,.45);
+  box-shadow:0 0 30px rgba(124,58,237,.25),0 8px 30px rgba(0,0,0,.5)}
+
+/* Home hero */
+.hero{text-align:center;padding:30px 20px 26px;position:relative;overflow:hidden}
+.hero .torii{font-size:52px;line-height:1;margin-bottom:6px;filter:drop-shadow(0 0 16px rgba(167,139,250,.6))}
+.hero h1{font-family:'Zen Kaku Gothic New';font-weight:900;font-size:23px;margin-bottom:4px}
+.hero .kick{color:var(--purple-glow);font-family:'Cinzel',serif;font-size:11px;letter-spacing:3px;text-transform:uppercase;margin-bottom:16px}
+.hero p{color:var(--dim);font-size:13.5px;line-height:1.6;margin-bottom:4px}
+
+.rank{display:flex;align-items:center;justify-content:center;gap:10px;margin:16px 0 6px}
+.rank .badge{font-family:'Cinzel',serif;font-weight:800;font-size:15px;
+  padding:6px 16px;border-radius:999px;
+  background:linear-gradient(90deg,rgba(124,58,237,.25),rgba(34,211,238,.15));
+  border:1px solid rgba(167,139,250,.4);color:#c4b5fd}
+
+/* Botón principal */
+.btn{display:block;width:100%;border:none;border-radius:16px;padding:17px;
+  font-family:'Zen Kaku Gothic New';font-weight:900;font-size:16px;cursor:pointer;
+  color:#fff;position:relative;overflow:hidden;letter-spacing:.5px}
+.btn.primary{background:linear-gradient(120deg,var(--violet-deep),var(--purple),var(--cyan));
+  background-size:200% 100%;box-shadow:0 6px 24px rgba(124,58,237,.5);
+  animation:shimmer 4s ease infinite}
+@keyframes shimmer{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+.btn.primary::after{content:"";position:absolute;inset:0;
+  background:radial-gradient(circle at 50% 120%,rgba(255,255,255,.25),transparent 60%)}
+.btn:active{transform:scale(.97)}
+.btn.ghost{background:var(--panel);border:1px solid var(--line);color:var(--ink);
+  box-shadow:none;font-size:14px;font-weight:700}
+.btn.small{padding:12px;font-size:13.5px}
+
+.row{display:flex;gap:10px}
+.mini{flex:1}
+
+/* Progress bar */
+.pbar{height:8px;background:var(--panel);border-radius:999px;overflow:hidden;margin:0 0 4px;border:1px solid var(--line)}
+.pbar>i{display:block;height:100%;background:linear-gradient(90deg,var(--purple),var(--cyan));
+  border-radius:999px;transition:width .4s ease;box-shadow:0 0 10px rgba(139,92,246,.6)}
+.pmeta{display:flex;justify-content:space-between;font-size:11px;color:var(--dim);margin-bottom:14px}
+
+/* Activity */
+.qtop{display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap}
+.tema-tag{font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;
+  padding:4px 10px;border-radius:999px;border:1px solid var(--line);color:var(--dim)}
+.tema-verbos{color:#a78bfa;border-color:rgba(167,139,250,.4)}
+.tema-particulas{color:#22d3ee;border-color:rgba(34,211,238,.4)}
+.tema-vocab{color:#34d399;border-color:rgba(52,211,153,.4)}
+.tema-kanji{color:#fbbf24;border-color:rgba(251,191,36,.4)}
+.tema-gramatica{color:#fb7185;border-color:rgba(251,113,133,.4)}
+.tema-lectura{color:#60a5fa;border-color:rgba(96,165,250,.4)}
+.tema-principito{color:#f0abfc;border-color:rgba(240,171,252,.5);
+  background:rgba(240,171,252,.06)}
+.orb-tag{font-size:10px;color:var(--dim);margin-left:auto}
+.orb-dot{color:var(--gold)}
+
+.story{font-size:12px;color:var(--purple-glow);font-style:italic;margin-bottom:10px;
+  padding:8px 12px;background:rgba(139,92,246,.08);border-left:3px solid var(--purple);border-radius:8px}
+
+.q{font-size:18px;line-height:1.5;font-weight:500;margin:8px 0 18px}
+.q b{font-family:'Noto Sans JP';font-weight:900;color:#fff;font-size:20px}
+
+/* Opciones MC */
+.opts{display:flex;flex-direction:column;gap:10px}
+.opt{background:var(--panel2);border:1.5px solid var(--line);border-radius:14px;
+  padding:15px 16px;font-size:17px;font-weight:600;cursor:pointer;text-align:left;
+  color:var(--ink);transition:all .15s;font-family:'Noto Sans JP'}
+.opt:active{transform:scale(.98)}
+.opt.sel{border-color:var(--purple);background:rgba(139,92,246,.15)}
+.opt.correct{border-color:var(--green);background:rgba(52,211,153,.18);color:#a7f3d0}
+.opt.wrong{border-color:var(--red);background:rgba(248,113,113,.15);color:#fca5a5}
+.opt .mk{float:right;font-weight:900}
+
+/* Input */
+.inp{width:100%;background:var(--panel2);border:1.5px solid var(--line);border-radius:14px;
+  padding:16px;font-size:22px;color:#fff;font-family:'Noto Sans JP';font-weight:700;text-align:center;outline:none}
+.inp:focus{border-color:var(--purple);box-shadow:0 0 0 3px rgba(139,92,246,.2)}
+.inp.correct{border-color:var(--green);background:rgba(52,211,153,.12)}
+.inp.wrong{border-color:var(--red);background:rgba(248,113,113,.1)}
+.kanahint{font-size:11px;color:var(--dim);text-align:center;margin-top:8px}
+/* Kanji intro card */
+.kintro{text-align:center;padding:14px 0 6px}
+.kbig{font-family:'Noto Sans JP';font-weight:900;font-size:96px;line-height:1;color:#fff;
+  text-shadow:0 0 30px rgba(167,139,250,.6),0 0 60px rgba(124,58,237,.4);margin-bottom:10px}
+.kread{font-family:'Noto Sans JP';font-size:26px;font-weight:700;color:var(--cyan);margin-bottom:4px}
+.krom{color:var(--dim);font-size:15px;font-weight:600}
+.ksig{font-size:18px;color:var(--purple-glow);font-weight:700}
+.kmnemo{margin-top:16px;padding:14px 16px;background:rgba(139,92,246,.1);
+  border:1px solid rgba(139,92,246,.35);border-radius:14px;font-size:14.5px;line-height:1.6}
+.kmnemo-h{font-weight:800;color:var(--purple-glow);margin-bottom:6px;font-size:13px}
+.kexample{margin-top:12px;padding:11px 14px;background:var(--panel2);border-radius:12px;
+  font-size:13.5px;color:var(--ink);border-left:3px solid var(--cyan)}
+.kexample b{font-family:'Noto Sans JP';font-size:16px}
+/* toggle */
+.toggle-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:12px}
+.toggle-row .tlbl{font-size:13.5px;font-weight:600}
+.toggle-row .tsub{font-size:11.5px;color:var(--dim);margin-top:2px}
+.sw{width:48px;height:28px;border-radius:999px;background:var(--panel2);border:1px solid var(--line);
+  position:relative;cursor:pointer;flex-shrink:0;transition:background .2s}
+.sw.on{background:linear-gradient(90deg,var(--purple),var(--cyan))}
+.sw::after{content:"";position:absolute;top:2px;left:2px;width:22px;height:22px;border-radius:50%;
+  background:#fff;transition:left .2s}
+.sw.on::after{left:22px}
+/* kanji mastery grid en stats */
+.kgrid{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.kcell{width:38px;height:44px;border-radius:8px;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;font-family:'Noto Sans JP';font-weight:700;font-size:18px;
+  background:var(--panel2);border:1px solid var(--line);position:relative}
+.kcell .lv{position:absolute;bottom:-2px;font-size:8px;font-weight:800;padding:1px 3px;border-radius:4px}
+.kcell.l0{opacity:.35}
+.kcell.l1{border-color:rgba(251,113,133,.5)}
+.kcell.l2{border-color:rgba(251,191,36,.5)}
+.kcell.l3{border-color:rgba(34,211,238,.5)}
+.kcell.l4{border-color:rgba(52,211,153,.6);background:rgba(52,211,153,.12)}
+
+/* Order chips */
+.slots{display:flex;flex-wrap:wrap;gap:8px;min-height:56px;padding:12px;
+  background:var(--panel2);border:1.5px dashed var(--line);border-radius:14px;margin-bottom:14px;align-content:flex-start}
+.bank{display:flex;flex-wrap:wrap;gap:8px}
+.chipword{background:linear-gradient(160deg,var(--panel2),#20293f);border:1.5px solid var(--line);
+  border-radius:12px;padding:12px 15px;font-size:17px;font-weight:700;cursor:pointer;
+  font-family:'Noto Sans JP';color:#fff;transition:transform .1s;user-select:none}
+.chipword:active{transform:scale(.94)}
+.chipword.placed{opacity:.35;pointer-events:none}
+.slots .chipword{border-color:var(--purple);background:rgba(139,92,246,.14)}
+
+/* Match */
+.match-cols{display:flex;gap:12px}
+.mcol{flex:1;display:flex;flex-direction:column;gap:9px}
+.mitem{background:var(--panel2);border:1.5px solid var(--line);border-radius:12px;
+  padding:13px;font-size:16px;font-weight:600;cursor:pointer;text-align:center;
+  font-family:'Noto Sans JP';transition:all .15s;min-height:48px;display:flex;align-items:center;justify-content:center}
+.mitem.sel{border-color:var(--cyan);background:rgba(34,211,238,.15)}
+.mitem.done{border-color:var(--green);background:rgba(52,211,153,.14);color:#a7f3d0;pointer-events:none;opacity:.8}
+.mitem.err{border-color:var(--red);animation:shake .3s}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+
+/* Open */
+.ta{width:100%;min-height:100px;background:var(--panel2);border:1.5px solid var(--line);
+  border-radius:14px;padding:14px;font-size:16px;color:#fff;font-family:'Noto Sans JP';
+  outline:none;resize:vertical;line-height:1.6}
+.ta:focus{border-color:var(--purple)}
+
+/* Feedback */
+.fb{margin-top:16px;padding:14px 16px;border-radius:14px;font-size:14px;line-height:1.55;display:none}
+.fb.show{display:block;animation:pop .3s}
+@keyframes pop{from{transform:scale(.95);opacity:0}to{transform:scale(1);opacity:1}}
+.fb.ok{background:rgba(52,211,153,.12);border:1px solid rgba(52,211,153,.4);color:#a7f3d0}
+.fb.no{background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.35);color:#fde68a}
+.fb .fbh{font-weight:800;margin-bottom:5px;display:flex;align-items:center;gap:6px}
+.fb .ex{color:var(--ink);opacity:.9;margin-top:4px}
+
+.hintbtn{background:none;border:1px dashed var(--line);color:var(--dim);border-radius:10px;
+  padding:8px 12px;font-size:12px;cursor:pointer;margin-top:12px;font-family:inherit;font-weight:600}
+.hintbox{margin-top:8px;font-size:12.5px;color:var(--cyan);padding:8px 12px;
+  background:rgba(34,211,238,.07);border-radius:10px;display:none}
+.hintbox.show{display:block}
+
+/* Action bar fija */
+.actionbar{position:fixed;bottom:0;left:0;right:0;z-index:30;
+  padding:12px 16px calc(12px + env(safe-area-inset-bottom));
+  background:linear-gradient(0deg,var(--bg) 70%,transparent);max-width:520px;margin:0 auto}
+
+/* Sparks al acertar */
+.spark{position:fixed;width:8px;height:8px;border-radius:50%;pointer-events:none;z-index:100}
+
+/* Result screen */
+.stars{font-size:44px;text-align:center;margin:10px 0;letter-spacing:6px}
+.result-xp{text-align:center;font-size:15px;color:var(--gold);font-weight:800;margin-bottom:16px}
+.big{font-size:34px;font-weight:900;text-align:center;font-family:'Zen Kaku Gothic New'}
+
+/* Stats */
+.stat-block{margin-bottom:18px}
+.stat-h{font-size:13px;font-weight:800;color:var(--purple-glow);letter-spacing:1px;
+  text-transform:uppercase;margin-bottom:10px;font-family:'Cinzel',serif}
+.bar-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;font-size:13px}
+.bar-row .lbl{width:88px;color:var(--dim);text-transform:capitalize;flex-shrink:0}
+.bar-row .track{flex:1;height:9px;background:var(--panel2);border-radius:999px;overflow:hidden}
+.bar-row .track>i{display:block;height:100%;border-radius:999px}
+.bar-row .pct{width:38px;text-align:right;font-weight:700;font-size:12px}
+.mini-note{font-size:12px;color:var(--dim);line-height:1.5}
+
+.badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.bdg{font-size:11px;padding:6px 11px;border-radius:999px;background:rgba(139,92,246,.12);
+  border:1px solid rgba(139,92,246,.35);color:#c4b5fd;font-weight:700}
+.bdg.locked{opacity:.3;filter:grayscale(1)}
+
+.openlog{font-size:13px;padding:10px 12px;background:var(--panel2);border-radius:10px;
+  margin-bottom:8px;border-left:3px solid var(--purple)}
+.openlog .ol-q{color:var(--dim);font-size:11px;margin-bottom:4px}
+.openlog .ol-a{font-family:'Noto Sans JP'}
+
+/* Nav */
+.tabbar{display:flex;gap:6px;margin-top:12px}
+.tabbar button{flex:1;background:var(--panel);border:1px solid var(--line);color:var(--dim);
+  border-radius:12px;padding:10px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit}
+.tabbar button.on{color:#fff;border-color:var(--purple);background:rgba(139,92,246,.14)}
+
+.section-title{font-family:'Cinzel',serif;font-size:12px;letter-spacing:2px;text-transform:uppercase;
+  color:var(--dim);margin:20px 0 10px;display:flex;align-items:center;gap:8px}
+.section-title::before,.section-title::after{content:"";flex:1;height:1px;background:var(--line)}
+
+.hidden{display:none!important}
+.center{text-align:center}
+.mt{margin-top:14px}
+.small-dim{font-size:12px;color:var(--dim);line-height:1.5}
+.toast{position:fixed;top:70px;left:50%;transform:translateX(-50%);z-index:200;
+  background:var(--panel2);border:1px solid var(--purple);color:#fff;padding:12px 18px;
+  border-radius:12px;font-size:13px;font-weight:700;box-shadow:0 8px 24px rgba(0,0,0,.5);
+  opacity:0;transition:opacity .3s,transform .3s;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div class="embers" id="embers"></div>
+<div id="app">
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <span class="jp">影の道場</span>
+      <span class="sub">Kage no Dōjō · Nivel N5</span>
+    </div>
+    <div class="hstats">
+      <div class="chip streak" id="streakChip">🔥 <span id="streakN">0</span></div>
+      <div class="chip xp">✦ <span id="xpN">0</span></div>
+    </div>
+  </header>
+
+  <!-- HOME -->
+  <div id="viewHome">
+    <div class="card hero glow">
+      <div class="torii">⛩️</div>
+      <h1>影の道場へようこそ</h1>
+      <div class="kick">El Dojo de las Sombras</div>
+      <p id="greet">Entrená tu japonés como quien entrena artes marciales:</p>
+      <p style="color:var(--purple-glow);font-weight:600">un kata por día, sin saltar pasos.</p>
+      <div class="rank">
+        <span class="badge" id="rankBadge">見習い · Aprendiz</span>
+      </div>
+    </div>
+
+    <div class="mt">
+      <button class="btn primary" onclick="startMission()">今日の修行 · Misión del Día</button>
+    </div>
+    <div class="mt">
+      <button class="btn ghost small" onclick="show('viewScrolls')">📜 巻物 · Pergaminos (teoría)</button>
+    </div>
+    <div class="row mt">
+      <button class="btn ghost small mini" onclick="show('viewStats')">📊 Estadísticas</button>
+      <button class="btn ghost small mini" onclick="show('viewMore')">⚙️ Más</button>
+    </div>
+
+    <div class="section-title">Tu progreso</div>
+    <div class="card">
+      <div class="bar-row"><span class="lbl">Racha</span>
+        <div class="track"><i style="width:var(--w);background:linear-gradient(90deg,#fb7185,#fbbf24)" id="hbStreak"></i></div>
+        <span class="pct" id="hbStreakN">0d</span></div>
+      <div class="bar-row"><span class="lbl">Dominado</span>
+        <div class="track"><i style="background:linear-gradient(90deg,#34d399,#22d3ee)" id="hbMastery"></i></div>
+        <span class="pct" id="hbMasteryN">0%</span></div>
+      <div class="mini-note mt">Total de técnicas: <b id="poolCount">0</b> · Practicadas: <b id="seenCount">0</b></div>
+    </div>
+
+    <div class="section-title">Insignias</div>
+    <div class="card"><div class="badges" id="badgeWrap"></div></div>
+  </div>
+
+  <!-- MISSION -->
+  <div id="viewMission" class="hidden">
+    <div class="pbar"><i id="progFill" style="width:0%"></i></div>
+    <div class="pmeta"><span id="progLabel">Kata 1 / 8</span><span id="progTema"></span></div>
+
+    <div class="card" id="actCard"></div>
+  </div>
+
+  <!-- RESULT -->
+  <div id="viewResult" class="hidden">
+    <div class="card glow center">
+      <div class="stars" id="resStars">★★★</div>
+      <div class="big" id="resTitle">お見事！</div>
+      <div class="result-xp" id="resXp">+0 XP</div>
+      <p class="small-dim" id="resMsg"></p>
+      <div class="mt">
+        <button class="btn primary" onclick="startMission()">もう一回 · Otra misión</button>
+      </div>
+      <button class="btn ghost small mt" onclick="show('viewHome')">🏯 Volver al dojo</button>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div id="viewStats" class="hidden">
+    <div class="card">
+      <div class="stat-block">
+        <div class="stat-h">Dónde brillás / dónde cuesta</div>
+        <div id="statBars"></div>
+      </div>
+    </div>
+    <div class="card mt">
+      <div class="stat-block">
+        <div class="stat-h">Por nivel de Órbita</div>
+        <div id="statOrb"></div>
+      </div>
+    </div>
+    <div class="card mt">
+      <div class="stat-block">
+        <div class="stat-h">Dominio de Kanji 漢字</div>
+        <div id="statKanji"></div>
+      </div>
+    </div>
+    <div class="card mt">
+      <div class="stat-block">
+        <div class="stat-h">Últimos 7 días</div>
+        <div id="statDays"></div>
+      </div>
+    </div>
+    <div class="card mt">
+      <div class="stat-block">
+        <div class="stat-h">Tus reflexiones</div>
+        <div id="statOpen"><p class="mini-note">Todavía no escribiste nada en las actividades libres.</p></div>
+      </div>
+    </div>
+    <button class="btn ghost mt" onclick="show('viewHome')">🏯 Volver</button>
+  </div>
+
+  <!-- SCROLLS LIST -->
+  <div id="viewScrolls" class="hidden">
+    <div class="card hero" style="padding:22px">
+      <div style="font-size:40px">📜</div>
+      <h1 style="font-size:20px">巻物 · Pergaminos</h1>
+      <div class="kick">Biblioteca del Dojo</div>
+      <p>Teoría completa de cada disciplina. Consultá cuando quieras, sin gastar XP.</p>
+    </div>
+    <div id="scrollList" class="mt"></div>
+    <button class="btn ghost mt" onclick="show('viewHome')">🏯 Volver al dojo</button>
+  </div>
+
+  <!-- SCROLL DETAIL -->
+  <div id="viewScrollDetail" class="hidden">
+    <div id="scrollDetail"></div>
+    <button class="btn ghost mt" onclick="show('viewScrolls')">📜 Volver a los pergaminos</button>
+  </div>
+
+  <!-- MORE -->
+  <div id="viewMore" class="hidden">
+    <div class="card">
+      <div class="stat-h">Perfil del guerrero</div>
+      <div class="mini-note mt">Nombre: <b id="pName">Dami</b></div>
+      <div class="mini-note">XP total: <b id="pXp">0</b> · Racha: <b id="pStreak">0</b> días</div>
+      <div class="mini-note">Rango: <b id="pRank">見習い</b></div>
+    </div>
+    <div class="card mt">
+      <div class="stat-h">Kanji 漢字</div>
+      <div class="toggle-row">
+        <div>
+          <div class="tlbl">Modo kanji suave</div>
+          <div class="tsub">Techo en nivel 2: solo reconocer, nunca escribir. Ideal si querés priorizar vocabulario y gramática.</div>
+        </div>
+        <div class="sw" id="softToggle" onclick="toggleSoft()"></div>
+      </div>
+    </div>
+    <div class="card mt">
+      <div class="stat-h">Respaldo</div>
+      <p class="mini-note mt">Tu progreso se guarda solo en este navegador. Exportá un respaldo para no perderlo o pasarlo a otro dispositivo.</p>
+      <div class="row mt">
+        <button class="btn ghost small mini" onclick="exportData()">⬇️ Exportar</button>
+        <button class="btn ghost small mini" onclick="document.getElementById('impFile').click()">⬆️ Importar</button>
+      </div>
+      <input type="file" id="impFile" accept="application/json" class="hidden" onchange="importData(event)">
+    </div>
+    <div class="card mt">
+      <div class="stat-h">Peligro</div>
+      <button class="btn ghost small mt" onclick="resetAll()" style="color:var(--red);border-color:rgba(248,113,113,.4)">🗑️ Borrar todo el progreso</button>
+    </div>
+    <div class="card mt">
+      <p class="mini-note center" style="line-height:1.7">
+        影の道場 · Dojo de las Sombras<br>
+        Contenido: cuadernillos VADOCA N5 + 「あのときの王子くん」<br>
+        <span style="color:var(--purple-glow)">「心でなくちゃ、よく見えない」</span>
+      </p>
+    </div>
+    <button class="btn ghost mt" onclick="show('viewHome')">🏯 Volver</button>
+  </div>
+
+</div>
+</div>
+
+<div class="actionbar hidden" id="actionBar">
+  <button class="btn primary" id="mainAction" onclick="onAction()">確認 · Comprobar</button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════ DATA ═══════════════
+const POOL = [{"id":"verbos_001","tema":"verbos","tipo":"input","orb":1,"q":"Conjugá <b>たべる</b> (comer) en presente afirmativo (＋).","variants":["たべます"],"ex":"たべる → たべます. Grupo 2.","hint":"Grupo 2: cambiá la terminación y agregá ます."},{"id":"verbos_002","tema":"verbos","tipo":"input","orb":1,"q":"Conjugá <b>たべる</b> (comer) en pasado afirmativo (＋).","variants":["たべました"],"ex":"たべる → たべました. El pasado es ました.","hint":"Presente たべます → cambiá ます por ました."},{"id":"verbos_003","tema":"verbos","tipo":"input","orb":2,"q":"Conjugá <b>たべる</b> (comer) en presente negativo (−).","variants":["たべません"],"ex":"たべる → たべません. El negativo es ません.","hint":"Presente たべます → cambiá ます por ません."},{"id":"verbos_004","tema":"verbos","tipo":"input","orb":3,"q":"Conjugá <b>たべる</b> (comer) en pasado negativo (−).","variants":["たべませんでした"],"ex":"たべる → たべませんでした. Pasado negativo = ませんでした.","hint":"El más largo: ません + でした."},{"id":"verbos_005","tema":"verbos","tipo":"input","orb":1,"q":"Conjugá <b>のむ</b> (beber) en presente afirmativo (＋).","variants":["のみます"],"ex":"のむ → のみます. Grupo 1.","hint":"Grupo 1: cambiá la terminación y agregá ます."},{"id":"verbos_006","tema":"verbos","tipo":"input","orb":1,"q":"Conjugá <b>のむ</b> (beber) en pasado afirmativo (＋).","variants":["のみました"],"ex":"のむ → のみました. El pasado es ました.","hint":"Presente のみます → cambiá ます por ました."},{"id":"verbos_007","tema":"verbos","tipo":"input","orb":2,"q":"Conjugá <b>のむ</b> (beber) en presente negativo (−).","variants":["のみません"],"ex":"のむ → のみません. El negativo es ません.","hint":"Presente のみます → cambiá ます por ません."},{"id":"verbos_008","tema":"verbos","tipo":"input","orb":3,"q":"Conjugá <b>のむ</b> (beber) en pasado negativo (−).","variants":["のみませんでした"],"ex":"のむ → のみませんでした. Pasado negativo = ませんでした.","hint":"El más largo: ません + でした."},{"id":"verbos_009","tema":"verbos","tipo":"input","orb":1,"q":"Conjugá <b>みる</b> (ver) en presente afirmativo (＋).","variants":["みます"],"ex":"みる → みます. Grupo 2.","hint":"Grupo 2: cambiá la terminación y agregá ます."},{"id":"verbos_010","tema":"verbos","tipo":"input","orb":1,"q":"Conjugá <b>みる</b> (ver) en pasado afirmativo (＋).","variants":["みました"],"ex":"みる → みました. El pasado es ました.","hint":"Presente みます → cambiá ます por ました."},{"id":"verbos_011","tema":"verbos","tipo":"input","orb":2,"q":"Conjugá <b>みる</b> (ver) en presente negativo (−).","variants":["みません"],"ex":"みる → みません. El negativo es ません.","hint":"Presente みます → cambiá ます por ません."},{"id":"verbos_012","tema":"verbos","tipo":"input","orb":3,"q":"Conjugá <b>みる</b> (ver) en pasado negativo (−).","variants":["みませんでした"],"ex":"みる → みませんでした. Pasado negativo = ませんでした.","hint":"El más largo: ません + でした."},{"id":"verbos_013","tema":"verbos","tipo":"input","orb":1,"q":"Conjugá <b>いく</b> (ir) en presente afirmativo (＋).","variants":["いきます"],"ex":"いく → いきます. Grupo 1.","hint":"Grupo 1: cambiá la terminación y agregá ます."},{"id":"verbos_014","tema":"verbos","tipo":"input","orb":1,"q":"Conjugá <b>いく</b> (ir) en pasado afirmativo (＋).","variants":["いきました"],"ex":"いく → いきました. El pasado es ました.","hint":"Presente いきます → cambiá ます por ました."},{"id":"verbos_015","tema":"verbos","tipo":"input","orb":2,"q":"Conjugá <b>いく</b> (ir) en presente negativo (−).","variants":["いきません"],"ex":"いく → いきません. El negativo es ません.","hint":"Presente いきます → cambiá ます por ません."},{"id":"verbos_016","tema":"verbos","tipo":"input","orb":3,"q":"Conjugá <b>いく</b> (ir) en pasado negativo (−).","variants":["いきませんでした"],"ex":"いく → いきませんでした. Pasado negativo = ませんでした.","hint":"El más largo: ません + でした."},{"id":"verbos_017","tema":"verbos","tipo":"input","orb":1,"q":"Conjugá <b>くる</b> (venir) en presente afirmativo (＋).","variants":["きます"],"ex":"くる → きます. Grupo 3.","hint":"Grupo 3: cambiá la terminación y agregá ます."},{"id":"verbos_018","tema":"verbos","tipo":"input","orb":1,"q":"Conjugá <b>くる</b> (venir) en pasado afirmativo (＋).","variants":["きました"],"ex":"くる → きました. El pasado es ました.","hint":"Presente きます → cambiá ます por ました."},{"id":"verbos_019","tema":"verbos","tipo":"input","orb":2,"q":"Conjugá <b>くる</b> (venir) en presente negativo (−).","variants":["きません"],"ex":"くる → きません. El negativo es ません.","hint":"Presente きます → cambiá ます por ません."},{"id":"verbos_020","tema":"verbos","tipo":"input","orb":3,"q":"Conjugá <b>くる</b> (venir) en pasado negativo (−).","variants":["きませんでした"],"ex":"くる → きませんでした. Pasado negativo = ませんでした.","hint":"El más largo: ません + でした."},{"id":"verbos_021","tema":"verbos","tipo":"input","orb":1,"q":"Conjugá <b>する</b> (hacer) en presente afirmativo (＋).","variants":["します"],"ex":"する → します. Grupo 3.","hint":"Grupo 3: cambiá la terminación y agregá ます."},{"id":"verbos_022","tema":"verbos","tipo":"input","orb":1,"q":"Conjugá <b>する</b> (hacer) en pasado afirmativo (＋).","variants":["しました"],"ex":"する → しました. El pasado es ました.","hint":"Presente します → cambiá ます por ました."},{"id":"verbos_023","tema":"verbos","tipo":"input","orb":2,"q":"Conjugá <b>する</b> (hacer) en presente negativo (−).","variants":["しません"],"ex":"する → しません. El negativo es ません.","hint":"Presente します → cambiá ます por ません."},{"id":"verbos_024","tema":"verbos","tipo":"input","orb":3,"q":"Conjugá <b>する</b> (hacer) en pasado negativo (−).","variants":["しませんでした"],"ex":"する → しませんでした. Pasado negativo = ませんでした.","hint":"El más largo: ません + でした."},{"id":"verbos_025","tema":"verbos","tipo":"input","orb":1,"q":"Conjugá <b>はなす</b> (hablar) en presente afirmativo (＋).","variants":["はなします"],"ex":"はなす → はなします. Grupo 1.","hint":"Grupo 1: cambiá la terminación y agregá ます."},{"id":"verbos_026","tema":"verbos","tipo":"input","orb":1,"q":"Conjugá <b>はなす</b> (hablar) en pasado afirmativo (＋).","variants":["はなしました"],"ex":"はなす → はなしました. El pasado es ました.","hint":"Presente はなします → cambiá ます por ました."},{"id":"verbos_027","tema":"verbos","tipo":"input","orb":2,"q":"Conjugá <b>はなす</b> (hablar) en presente negativo (−).","variants":["はなしません"],"ex":"はなす → はなしません. El negativo es ません.","hint":"Presente はなします → cambiá ます por ません."},{"id":"verbos_028","tema":"verbos","tipo":"input","orb":3,"q":"Conjugá <b>はなす</b> (hablar) en pasado negativo (−).","variants":["はなしませんでした"],"ex":"はなす → はなしませんでした. Pasado negativo = ませんでした.","hint":"El más largo: ません + でした."},{"id":"verbos_029","tema":"verbos","tipo":"input","orb":1,"q":"Conjugá <b>よむ</b> (leer) en presente afirmativo (＋).","variants":["よみます"],"ex":"よむ → よみます. Grupo 1.","hint":"Grupo 1: cambiá la terminación y agregá ます."},{"id":"verbos_030","tema":"verbos","tipo":"input","orb":1,"q":"Conjugá <b>よむ</b> (leer) en pasado afirmativo (＋).","variants":["よみました"],"ex":"よむ → よみました. El pasado es ました.","hint":"Presente よみます → cambiá ます por ました."},{"id":"verbos_031","tema":"verbos","tipo":"input","orb":2,"q":"Conjugá <b>よむ</b> (leer) en presente negativo (−).","variants":["よみません"],"ex":"よむ → よみません. El negativo es ません.","hint":"Presente よみます → cambiá ます por ません."},{"id":"verbos_032","tema":"verbos","tipo":"input","orb":3,"q":"Conjugá <b>よむ</b> (leer) en pasado negativo (−).","variants":["よみませんでした"],"ex":"よむ → よみませんでした. Pasado negativo = ませんでした.","hint":"El más largo: ません + でした."},{"id":"verbos_033","tema":"verbos","tipo":"input","orb":1,"q":"Conjugá <b>ねる</b> (dormir) en presente afirmativo (＋).","variants":["ねます"],"ex":"ねる → ねます. Grupo 2.","hint":"Grupo 2: cambiá la terminación y agregá ます."},{"id":"verbos_034","tema":"verbos","tipo":"input","orb":1,"q":"Conjugá <b>ねる</b> (dormir) en pasado afirmativo (＋).","variants":["ねました"],"ex":"ねる → ねました. El pasado es ました.","hint":"Presente ねます → cambiá ます por ました."},{"id":"verbos_035","tema":"verbos","tipo":"input","orb":2,"q":"Conjugá <b>ねる</b> (dormir) en presente negativo (−).","variants":["ねません"],"ex":"ねる → ねません. El negativo es ません.","hint":"Presente ねます → cambiá ます por ません."},{"id":"verbos_036","tema":"verbos","tipo":"input","orb":3,"q":"Conjugá <b>ねる</b> (dormir) en pasado negativo (−).","variants":["ねませんでした"],"ex":"ねる → ねませんでした. Pasado negativo = ませんでした.","hint":"El más largo: ません + でした."},{"id":"verbos_037","tema":"verbos","tipo":"input","orb":1,"q":"Conjugá <b>べんきょうする</b> (estudiar) en presente afirmativo (＋).","variants":["べんきょうします"],"ex":"べんきょうする → べんきょうします. Grupo 3.","hint":"Grupo 3: cambiá la terminación y agregá ます."},{"id":"verbos_038","tema":"verbos","tipo":"input","orb":1,"q":"Conjugá <b>べんきょうする</b> (estudiar) en pasado afirmativo (＋).","variants":["べんきょうしました"],"ex":"べんきょうする → べんきょうしました. El pasado es ました.","hint":"Presente べんきょうします → cambiá ます por ました."},{"id":"verbos_039","tema":"verbos","tipo":"input","orb":2,"q":"Conjugá <b>べんきょうする</b> (estudiar) en presente negativo (−).","variants":["べんきょうしません"],"ex":"べんきょうする → べんきょうしません. El negativo es ません.","hint":"Presente べんきょうします → cambiá ます por ません."},{"id":"verbos_040","tema":"verbos","tipo":"input","orb":3,"q":"Conjugá <b>べんきょうする</b> (estudiar) en pasado negativo (−).","variants":["べんきょうしませんでした"],"ex":"べんきょうする → べんきょうしませんでした. Pasado negativo = ませんでした.","hint":"El más largo: ません + でした."},{"id":"verbos_041","tema":"verbos","tipo":"mc","orb":2,"q":"¿A qué grupo pertenece <b>たべる</b> (comer)?","opts":["Grupo 1","Grupo 2","Grupo 3"],"correct":1,"ex":"たべる es Grupo 2. る-verbo: い/え antes de る.","hint":"Grupo 3 solo son する y くる. Grupo 2 termina en る con い/え antes."},{"id":"verbos_042","tema":"verbos","tipo":"mc","orb":2,"q":"¿A qué grupo pertenece <b>のむ</b> (beber)?","opts":["Grupo 1","Grupo 2","Grupo 3"],"correct":0,"ex":"のむ es Grupo 1. う-verbo.","hint":"Grupo 3 solo son する y くる. Grupo 2 termina en る con い/え antes."},{"id":"verbos_043","tema":"verbos","tipo":"mc","orb":2,"q":"¿A qué grupo pertenece <b>みる</b> (ver)?","opts":["Grupo 1","Grupo 2","Grupo 3"],"correct":1,"ex":"みる es Grupo 2. る-verbo: い/え antes de る.","hint":"Grupo 3 solo son する y くる. Grupo 2 termina en る con い/え antes."},{"id":"verbos_044","tema":"verbos","tipo":"mc","orb":2,"q":"¿A qué grupo pertenece <b>いく</b> (ir)?","opts":["Grupo 1","Grupo 2","Grupo 3"],"correct":0,"ex":"いく es Grupo 1. う-verbo.","hint":"Grupo 3 solo son する y くる. Grupo 2 termina en る con い/え antes."},{"id":"verbos_045","tema":"verbos","tipo":"mc","orb":2,"q":"¿A qué grupo pertenece <b>くる</b> (venir)?","opts":["Grupo 1","Grupo 2","Grupo 3"],"correct":2,"ex":"くる es Grupo 3. Irregular (solo する y くる).","hint":"Grupo 3 solo son する y くる. Grupo 2 termina en る con い/え antes."},{"id":"verbos_046","tema":"verbos","tipo":"mc","orb":2,"q":"¿A qué grupo pertenece <b>する</b> (hacer)?","opts":["Grupo 1","Grupo 2","Grupo 3"],"correct":2,"ex":"する es Grupo 3. Irregular (solo する y くる).","hint":"Grupo 3 solo son する y くる. Grupo 2 termina en る con い/え antes."},{"id":"verbos_047","tema":"verbos","tipo":"mc","orb":2,"q":"¿A qué grupo pertenece <b>はなす</b> (hablar)?","opts":["Grupo 1","Grupo 2","Grupo 3"],"correct":0,"ex":"はなす es Grupo 1. う-verbo.","hint":"Grupo 3 solo son する y くる. Grupo 2 termina en る con い/え antes."},{"id":"verbos_048","tema":"verbos","tipo":"mc","orb":2,"q":"¿A qué grupo pertenece <b>よむ</b> (leer)?","opts":["Grupo 1","Grupo 2","Grupo 3"],"correct":0,"ex":"よむ es Grupo 1. う-verbo.","hint":"Grupo 3 solo son する y くる. Grupo 2 termina en る con い/え antes."},{"id":"verbos_049","tema":"verbos","tipo":"mc","orb":2,"q":"¿A qué grupo pertenece <b>ねる</b> (dormir)?","opts":["Grupo 1","Grupo 2","Grupo 3"],"correct":1,"ex":"ねる es Grupo 2. る-verbo: い/え antes de る.","hint":"Grupo 3 solo son する y くる. Grupo 2 termina en る con い/え antes."},{"id":"verbos_050","tema":"verbos","tipo":"mc","orb":2,"q":"¿A qué grupo pertenece <b>べんきょうする</b> (estudiar)?","opts":["Grupo 1","Grupo 2","Grupo 3"],"correct":2,"ex":"べんきょうする es Grupo 3. Irregular (solo する y くる).","hint":"Grupo 3 solo son する y くる. Grupo 2 termina en る con い/え antes."},{"id":"verbos_051","tema":"verbos","tipo":"match","orb":1,"q":"Conectá cada verbo con su significado.","pairs":[["たべる","comer"],["のむ","beber"],["みる","ver"],["いく","ir"]],"ex":"Los verbos base de acción."},{"id":"verbos_052","tema":"verbos","tipo":"match","orb":1,"q":"Conectá cada verbo con su significado.","pairs":[["くる","venir"],["する","hacer"],["ねる","dormir"],["よむ","leer"]],"ex":"くる y する son los dos únicos irregulares."},{"id":"verbos_053","tema":"verbos","tipo":"match","orb":2,"q":"Conectá el verbo con su forma en presente (ます).","pairs":[["のむ","のみます"],["いく","いきます"],["くる","きます"],["する","します"]],"ex":"Ojo con los irregulares: くる→きます, する→します."},{"id":"verbos_054","tema":"verbos","tipo":"mc","orb":2,"err":true,"q":"¿Cuál conjugación está MAL?","opts":["たべます","のります","みます"],"correct":1,"ex":"のむ → のみます (no のります). む cambia a み.","hint":"Fijate en el verbo のむ."},{"id":"verbos_055","tema":"verbos","tipo":"mc","orb":2,"err":true,"q":"¿Cuál conjugación está MAL?","opts":["きます","します","くます"],"correct":2,"ex":"くる → きます (irregular, no くます).","hint":"くる es irregular."},{"id":"verbos_056","tema":"verbos","tipo":"mc","orb":3,"err":true,"q":"¿Cuál pasado negativo está MAL?","opts":["たべませんでした","いきませんした","のみませんでした"],"correct":1,"ex":"いく → いきませんでした. Le falta で.","hint":"El pasado negativo lleva でした completo."},{"id":"particulas_057","tema":"particulas","tipo":"mc","orb":2,"q":"Completá con la partícula: <b>コーヒー＿のみます。</b>","opts":["を","に","で"],"correct":0,"ex":"を marca el objeto directo.","hint":"を=objeto, に=destino/hora, で=lugar de acción, と=con quién."},{"id":"particulas_058","tema":"particulas","tipo":"mc","orb":2,"q":"Completá con la partícula: <b>がっこう＿いきます。</b>","opts":["に","を","で"],"correct":0,"ex":"に marca el destino del movimiento.","hint":"を=objeto, に=destino/hora, で=lugar de acción, と=con quién."},{"id":"particulas_059","tema":"particulas","tipo":"mc","orb":2,"q":"Completá con la partícula: <b>いえ＿ねます。</b>","opts":["で","を","に"],"correct":0,"ex":"で marca el lugar de la acción.","hint":"を=objeto, に=destino/hora, で=lugar de acción, と=con quién."},{"id":"particulas_060","tema":"particulas","tipo":"mc","orb":2,"q":"Completá con la partícula: <b>ラーメン＿たべます。</b>","opts":["を","へ","に"],"correct":0,"ex":"を: objeto directo de comer.","hint":"を=objeto, に=destino/hora, で=lugar de acción, と=con quién."},{"id":"particulas_061","tema":"particulas","tipo":"mc","orb":2,"q":"Completá con la partícula: <b>ともだち＿はなします。</b>","opts":["と","を","に"],"correct":0,"ex":"と marca 'con quién'.","hint":"を=objeto, に=destino/hora, で=lugar de acción, と=con quién."},{"id":"particulas_062","tema":"particulas","tipo":"mc","orb":2,"q":"Completá con la partícula: <b>しちじ＿おきます。</b>","opts":["に","で","を"],"correct":0,"ex":"に marca el punto de tiempo (hora).","hint":"を=objeto, に=destino/hora, で=lugar de acción, と=con quién."},{"id":"particulas_063","tema":"particulas","tipo":"mc","orb":2,"q":"Completá con la partícula: <b>えき＿でんしゃにのります。</b>","opts":["で","に","を"],"correct":0,"ex":"で: lugar de la acción.","hint":"を=objeto, に=destino/hora, で=lugar de acción, と=con quién."},{"id":"particulas_064","tema":"particulas","tipo":"mc","orb":2,"q":"Completá con la partícula: <b>ぼく＿ヒツジをかいて。</b>","opts":["に","を","で"],"correct":0,"ex":"に marca el destinatario (a mí).","hint":"を=objeto, に=destino/hora, で=lugar de acción, と=con quién."},{"id":"particulas_065","tema":"particulas","tipo":"mc","orb":2,"q":"Completá con la partícula: <b>にほんご＿べんきょうします。</b>","opts":["を","が","に"],"correct":0,"ex":"を: objeto directo de estudiar.","hint":"を=objeto, に=destino/hora, で=lugar de acción, と=con quién."},{"id":"particulas_066","tema":"particulas","tipo":"mc","orb":2,"q":"Completá con la partícula: <b>うち＿きます。</b>","opts":["に","で","を"],"correct":0,"ex":"に: destino (viene A casa).","hint":"を=objeto, に=destino/hora, で=lugar de acción, と=con quién."},{"id":"particulas_067","tema":"particulas","tipo":"input","orb":2,"q":"Escribí la partícula correcta: <b>アニメ＿みます。</b> (Veo anime)","variants":["を"],"ex":"を marca el objeto directo.","hint":"Es el objeto de ver."},{"id":"particulas_068","tema":"particulas","tipo":"input","orb":3,"q":"Escribí las partículas: <b>ともだち＿カフェ＿コーヒーをのみます。</b> (partícula 1 y 2, con espacio)","variants":["と で","とで"],"ex":"ともだちと (con un amigo) + カフェで (en el café).","hint":"Con quién + dónde."},{"id":"vocab_069","tema":"vocab","tipo":"input","orb":1,"q":"¿Cómo se dice \"<b>arroz / comida</b>\" en japonés? (en kana)","variants":["ごはん"],"ex":"arroz / comida = ごはん","hint":"Empieza con «ご»."},{"id":"vocab_070","tema":"vocab","tipo":"input","orb":1,"q":"¿Cómo se dice \"<b>agua</b>\" en japonés? (en kana)","variants":["みず"],"ex":"agua = みず","hint":"Empieza con «み»."},{"id":"vocab_071","tema":"vocab","tipo":"input","orb":1,"q":"¿Cómo se dice \"<b>café</b>\" en japonés? (en kana)","variants":["コーヒー"],"ex":"café = コーヒー","hint":"Empieza con «コ»."},{"id":"vocab_072","tema":"vocab","tipo":"input","orb":1,"q":"¿Cómo se dice \"<b>té</b>\" en japonés? (en kana)","variants":["おちゃ"],"ex":"té = おちゃ","hint":"Empieza con «お»."},{"id":"vocab_073","tema":"vocab","tipo":"input","orb":1,"q":"¿Cómo se dice \"<b>amigo</b>\" en japonés? (en kana)","variants":["ともだち"],"ex":"amigo = ともだち","hint":"Empieza con «と»."},{"id":"vocab_074","tema":"vocab","tipo":"input","orb":1,"q":"¿Cómo se dice \"<b>familia</b>\" en japonés? (en kana)","variants":["かぞく"],"ex":"familia = かぞく","hint":"Empieza con «か»."},{"id":"vocab_075","tema":"vocab","tipo":"input","orb":1,"q":"¿Cómo se dice \"<b>casa</b>\" en japonés? (en kana)","variants":["いえ"],"ex":"casa = いえ","hint":"Empieza con «い»."},{"id":"vocab_076","tema":"vocab","tipo":"input","orb":1,"q":"¿Cómo se dice \"<b>escuela</b>\" en japonés? (en kana)","variants":["がっこう"],"ex":"escuela = がっこう","hint":"Empieza con «が»."},{"id":"vocab_077","tema":"vocab","tipo":"input","orb":1,"q":"¿Cómo se dice \"<b>libro</b>\" en japonés? (en kana)","variants":["ほん"],"ex":"libro = ほん","hint":"Empieza con «ほ»."},{"id":"vocab_078","tema":"vocab","tipo":"input","orb":1,"q":"¿Cómo se dice \"<b>anime</b>\" en japonés? (en kana)","variants":["アニメ"],"ex":"anime = アニメ","hint":"Empieza con «ア»."},{"id":"vocab_079","tema":"vocab","tipo":"input","orb":1,"q":"¿Cómo se dice \"<b>tren</b>\" en japonés? (en kana)","variants":["でんしゃ"],"ex":"tren = でんしゃ","hint":"Empieza con «で»."},{"id":"vocab_080","tema":"vocab","tipo":"input","orb":1,"q":"¿Cómo se dice \"<b>estación</b>\" en japonés? (en kana)","variants":["えき"],"ex":"estación = えき","hint":"Empieza con «え»."},{"id":"vocab_081","tema":"vocab","tipo":"match","orb":1,"q":"Conectá palabra y significado.","pairs":[["ごはん","arroz"],["みず","agua"],["ともだち","amigo"],["いえ","casa"]],"ex":"Vocabulario cotidiano básico."},{"id":"vocab_082","tema":"vocab","tipo":"match","orb":1,"q":"Conectá palabra y significado.","pairs":[["でんしゃ","tren"],["えき","estación"],["がっこう","escuela"],["ほん","libro"]],"ex":"Lugares y objetos frecuentes."},{"id":"gramatica_133","tema":"gramatica","tipo":"order","orb":2,"q":"Ordená para formar: \"Como arroz a las 7\".","chips":["しちじに","ごはんを","たべます"],"correcta":["しちじに","ごはんを","たべます"],"ex":"Orden: Tiempo + Objeto(を) + Verbo. El verbo SIEMPRE al final."},{"id":"gramatica_134","tema":"gramatica","tipo":"order","orb":2,"q":"Ordená para formar: \"Voy a la escuela en tren\".","chips":["でんしゃで","がっこうに","いきます"],"correcta":["でんしゃで","がっこうに","いきます"],"ex":"Medio(で) + Destino(に) + Verbo."},{"id":"gramatica_135","tema":"gramatica","tipo":"order","orb":3,"q":"Ordená: \"Ayer estudié japonés con un amigo\".","chips":["きのう","ともだちと","にほんごを","べんきょうしました"],"correcta":["きのう","ともだちと","にほんごを","べんきょうしました"],"ex":"Tiempo + Con quién(と) + Objeto(を) + Verbo."},{"id":"gramatica_136","tema":"gramatica","tipo":"order","orb":2,"q":"Ordená: \"Veo anime en casa\".","chips":["いえで","アニメを","みます"],"correcta":["いえで","アニメを","みます"],"ex":"Lugar(で) + Objeto(を) + Verbo."},{"id":"lectura_137","tema":"lectura","tipo":"mc","orb":2,"q":"¿Qué significa: <b>まいばんアニメをみます</b>?","opts":["Veo anime todas las noches","Vi anime anoche","No veo anime"],"correct":0,"ex":"まいばん = todas las noches. みます = veo.","hint":"まいばん = cada noche."},{"id":"lectura_138","tema":"lectura","tipo":"mc","orb":2,"q":"¿Qué significa: <b>きのうラーメンをたべました</b>?","opts":["Como ramen hoy","Ayer comí ramen","No comí ramen"],"correct":1,"ex":"きのう = ayer. たべました = comí.","hint":"たべました es pasado."},{"id":"lectura_139","tema":"lectura","tipo":"mc","orb":3,"q":"¿Qué significa: <b>コーヒーはのみませんでした</b>?","opts":["Bebí café","No bebo café","No bebí café"],"correct":2,"ex":"のみませんでした = no bebí (pasado negativo).","hint":"ませんでした = pasado negativo."},{"id":"principito_140","tema":"principito","tipo":"mc","orb":1,"q":"En el libro, el principito pide: <b>「ヒツジの絵をかいて」</b>. ¿Qué verbo se usa?","opts":["かく (dibujar/escribir)","みる (ver)","たべる (comer)"],"correct":0,"ex":"かく = dibujar o escribir. \"Dibujame una oveja\".","story":"📖 あのときの王子くん — Le Petit Prince","hint":"Pensá en el contexto de la escena."},{"id":"principito_141","tema":"principito","tipo":"mc","orb":1,"q":"<b>「ぼくにヒツジをかいて」</b> — ¿qué marca la partícula に en ぼくに?","opts":["El destinatario (a mí)","El lugar","El objeto"],"correct":0,"ex":"に marca a quién va dirigida la acción: \"dibujame a MÍ\".","story":"📖 あのときの王子くん — Le Petit Prince","hint":"Pensá en el contexto de la escena."},{"id":"principito_142","tema":"principito","tipo":"mc","orb":2,"q":"El zorro dice: <b>「こんにちは」</b>. ¿Qué es?","opts":["Adiós","Hola / buenas tardes","Gracias"],"correct":1,"ex":"こんにちは es el saludo de día.","story":"📖 あのときの王子くん — Le Petit Prince","hint":"Pensá en el contexto de la escena."},{"id":"principito_143","tema":"principito","tipo":"mc","orb":2,"q":"Frase famosa del zorro: <b>「もののなかみは、目では見えない」</b>. ¿Qué significa?","opts":["Lo esencial es invisible a los ojos","El libro es aburrido","Las cosas son caras"],"correct":0,"ex":"La frase más célebre. \"Lo esencial de las cosas no se ve con los ojos\".","story":"📖 あのときの王子くん — Le Petit Prince","hint":"Pensá en el contexto de la escena."},{"id":"principito_144","tema":"principito","tipo":"mc","orb":3,"q":"<b>「夕ぐれが大すきなんだ」</b> dice el principito. ¿Qué le gusta?","opts":["El amanecer","El atardecer (夕ぐれ)","La lluvia"],"correct":1,"ex":"夕ぐれ = atardecer. 大すき = gustar mucho.","story":"📖 あのときの王子くん — Le Petit Prince","hint":"Pensá en el contexto de la escena."},{"id":"principito_145","tema":"principito","tipo":"mc","orb":3,"q":"El principito le dice <b>「さよなら」</b> a su flor. ¿Qué es?","opts":["Hola","Adiós","Perdón"],"correct":1,"ex":"さよなら = adiós.","story":"📖 あのときの王子くん — Le Petit Prince","hint":"Pensá en el contexto de la escena."},{"id":"principito_146","tema":"principito","tipo":"input","orb":2,"q":"En el libro, el principito pide que le dibujen una oveja. ¿Cómo se escribe \"oveja\" en kana? (ヒ__ジ)","variants":["ヒツジ"],"ex":"ヒツジ = oveja.","story":"📖 あのときの王子くん","hint":"ヒ + ツ + ジ"},{"id":"principito_147","tema":"principito","tipo":"open","orb":3,"q":"El zorro enseña que \"lo esencial es invisible a los ojos\". Escribí en japonés (aunque sea simple) algo importante para vos que no se pueda ver.","modelo":"かぞくがだいじです。(Mi familia es importante.) / ともだちがすきです。","story":"📖 あのときの王子くん"},{"id":"kanji_001","tema":"kanji","tipo":"intro","kanjiId":"k_yama","kLevel":0,"kanji":"山","kana":"やま","romaji":"yama","sig":"montaña","mnemo":"Tres picos apuntando al cielo: ⛰️ el kanji ES una montaña con tres cumbres.","exW":"山","exK":"やま","exM":"montaña"},{"id":"kanji_002","tema":"kanji","tipo":"mc","kanjiId":"k_yama","kLevel":1,"orb":1,"q":"¿Qué significa <b>山</b>?","opts":["tierra","ahora","montaña"],"ex":"山 = montaña. Tres picos apuntando al cielo: ⛰️ el kanji ES una montaña con tres cumbres.","mnemo":"Tres picos apuntando al cielo: ⛰️ el kanji ES una montaña con tres cumbres.","hint":"Tres picos apuntando al cielo: ⛰️ el kanji ES una montaña con tres cumbres.","correct":2},{"id":"kanji_003","tema":"kanji","tipo":"mc","kanjiId":"k_yama","kLevel":2,"orb":2,"q":"¿Cómo se lee <b>山</b>? <span style=\"font-size:14px;color:#8b96b0\">(montaña)</span>","opts":["かわ","なか","やま"],"ex":"山 se lee やま (yama). Tres picos apuntando al cielo: ⛰️ el kanji ES una montaña con tres cumbres.","mnemo":"Tres picos apuntando al cielo: ⛰️ el kanji ES una montaña con tres cumbres.","hint":"Tres picos apuntando al cielo: ⛰️ el kanji ES una montaña con tres cumbres.","correct":2},{"id":"kanji_004","tema":"kanji","tipo":"input","kanjiId":"k_yama","kLevel":3,"orb":3,"q":"Escribí la lectura de <b>山</b> <span style=\"font-size:14px;color:#8b96b0\">(montaña)</span>","variants":["やま","yama"],"ex":"山 = やま (yama). Tres picos apuntando al cielo: ⛰️ el kanji ES una montaña con tres cumbres.","mnemo":"Tres picos apuntando al cielo: ⛰️ el kanji ES una montaña con tres cumbres.","hint":"Tres picos apuntando al cielo: ⛰️ el kanji ES una montaña con tres cumbres."},{"id":"kanji_005","tema":"kanji","tipo":"mc","kanjiId":"k_yama","kLevel":3,"orb":3,"context":true,"q":"En la palabra <b>山</b>, ¿qué significa?","opts":["dinero","montaña","jueves"],"ex":"山 = やま = montaña. El kanji 山 aparece en contexto real.","mnemo":"Tres picos apuntando al cielo: ⛰️ el kanji ES una montaña con tres cumbres.","hint":"山 se lee やま","correct":1},{"id":"kanji_006","tema":"kanji","tipo":"intro","kanjiId":"k_ki","kLevel":0,"kanji":"木","kana":"き","romaji":"ki","sig":"árbol","mnemo":"Un árbol con tronco, ramas hacia arriba y raíces hacia abajo. 🌳","exW":"木よう日","exK":"もくようび","exM":"jueves"},{"id":"kanji_007","tema":"kanji","tipo":"mc","kanjiId":"k_ki","kLevel":1,"orb":1,"q":"¿Qué significa <b>木</b>?","opts":["árbol","grande","sol / día"],"ex":"木 = árbol. Un árbol con tronco, ramas hacia arriba y raíces hacia abajo. 🌳","mnemo":"Un árbol con tronco, ramas hacia arriba y raíces hacia abajo. 🌳","hint":"Un árbol con tronco, ramas hacia arriba y raíces hacia abajo. 🌳","correct":0},{"id":"kanji_008","tema":"kanji","tipo":"mc","kanjiId":"k_ki","kLevel":2,"orb":2,"q":"¿Cómo se lee <b>木</b>? <span style=\"font-size:14px;color:#8b96b0\">(árbol)</span>","opts":["た","き","の"],"ex":"木 se lee き (ki). Un árbol con tronco, ramas hacia arriba y raíces hacia abajo. 🌳","mnemo":"Un árbol con tronco, ramas hacia arriba y raíces hacia abajo. 🌳","hint":"Un árbol con tronco, ramas hacia arriba y raíces hacia abajo. 🌳","correct":1},{"id":"kanji_009","tema":"kanji","tipo":"input","kanjiId":"k_ki","kLevel":3,"orb":3,"q":"Escribí la lectura de <b>木</b> <span style=\"font-size:14px;color:#8b96b0\">(árbol)</span>","variants":["き","ki"],"ex":"木 = き (ki). Un árbol con tronco, ramas hacia arriba y raíces hacia abajo. 🌳","mnemo":"Un árbol con tronco, ramas hacia arriba y raíces hacia abajo. 🌳","hint":"Un árbol con tronco, ramas hacia arriba y raíces hacia abajo. 🌳"},{"id":"kanji_010","tema":"kanji","tipo":"mc","kanjiId":"k_ki","kLevel":3,"orb":3,"context":true,"q":"En la palabra <b>木よう日</b>, ¿qué significa?","opts":["japonés","jueves","dinero"],"ex":"木よう日 = もくようび = jueves. El kanji 木 aparece en contexto real.","mnemo":"Un árbol con tronco, ramas hacia arriba y raíces hacia abajo. 🌳","hint":"木よう日 se lee もくようび","correct":1},{"id":"kanji_011","tema":"kanji","tipo":"intro","kanjiId":"k_hi","kLevel":0,"kanji":"日","kana":"にち","romaji":"nichi","sig":"sol / día","mnemo":"El sol de los pictogramas, dibujado cuadrado. ☀️ Un círculo con un punto que se volvió rectángulo.","exW":"日本","exK":"にほん","exM":"Japón"},{"id":"kanji_012","tema":"kanji","tipo":"mc","kanjiId":"k_hi","kLevel":1,"orb":1,"q":"¿Qué significa <b>日</b>?","opts":["grande","medio / dentro","sol / día"],"ex":"日 = sol / día. El sol de los pictogramas, dibujado cuadrado. ☀️ Un círculo con un punto que se volvió rectángulo.","mnemo":"El sol de los pictogramas, dibujado cuadrado. ☀️ Un círculo con un punto que se volvió rectángulo.","hint":"El sol de los pictogramas, dibujado cuadrado. ☀️ Un círculo con un punto que se volvió rectángulo.","correct":2},{"id":"kanji_013","tema":"kanji","tipo":"mc","kanjiId":"k_hi","kLevel":2,"orb":2,"q":"¿Cómo se lee <b>日</b>? <span style=\"font-size:14px;color:#8b96b0\">(sol / día)</span>","opts":["ほん","みず","にち"],"ex":"日 se lee にち (nichi). El sol de los pictogramas, dibujado cuadrado. ☀️ Un círculo con un punto que se volvió rectángulo.","mnemo":"El sol de los pictogramas, dibujado cuadrado. ☀️ Un círculo con un punto que se volvió rectángulo.","hint":"El sol de los pictogramas, dibujado cuadrado. ☀️ Un círculo con un punto que se volvió rectángulo.","correct":2},{"id":"kanji_014","tema":"kanji","tipo":"input","kanjiId":"k_hi","kLevel":3,"orb":3,"q":"Escribí la lectura de <b>日</b> <span style=\"font-size:14px;color:#8b96b0\">(sol / día)</span>","variants":["にち","nichi"],"ex":"日 = にち (nichi). El sol de los pictogramas, dibujado cuadrado. ☀️ Un círculo con un punto que se volvió rectángulo.","mnemo":"El sol de los pictogramas, dibujado cuadrado. ☀️ Un círculo con un punto que se volvió rectángulo.","hint":"El sol de los pictogramas, dibujado cuadrado. ☀️ Un círculo con un punto que se volvió rectángulo."},{"id":"kanji_015","tema":"kanji","tipo":"mc","kanjiId":"k_hi","kLevel":3,"orb":3,"context":true,"q":"En la palabra <b>日本</b>, ¿qué significa?","opts":["martes","comer","Japón"],"ex":"日本 = にほん = Japón. El kanji 日 aparece en contexto real.","mnemo":"El sol de los pictogramas, dibujado cuadrado. ☀️ Un círculo con un punto que se volvió rectángulo.","hint":"日本 se lee にほん","correct":2},{"id":"kanji_016","tema":"kanji","tipo":"intro","kanjiId":"k_hito","kLevel":0,"kanji":"人","kana":"ひと","romaji":"hito","sig":"persona","mnemo":"Una persona caminando, vista de costado: dos piernas dando un paso. 🚶","exW":"日本人","exK":"にほんじん","exM":"japonés"},{"id":"kanji_017","tema":"kanji","tipo":"mc","kanjiId":"k_hito","kLevel":1,"orb":1,"q":"¿Qué significa <b>人</b>?","opts":["pequeño","persona","grande"],"ex":"人 = persona. Una persona caminando, vista de costado: dos piernas dando un paso. 🚶","mnemo":"Una persona caminando, vista de costado: dos piernas dando un paso. 🚶","hint":"Una persona caminando, vista de costado: dos piernas dando un paso. 🚶","correct":1},{"id":"kanji_018","tema":"kanji","tipo":"mc","kanjiId":"k_hito","kLevel":2,"orb":2,"q":"¿Cómo se lee <b>人</b>? <span style=\"font-size:14px;color:#8b96b0\">(persona)</span>","opts":["ひと","やま","おお"],"ex":"人 se lee ひと (hito). Una persona caminando, vista de costado: dos piernas dando un paso. 🚶","mnemo":"Una persona caminando, vista de costado: dos piernas dando un paso. 🚶","hint":"Una persona caminando, vista de costado: dos piernas dando un paso. 🚶","correct":0},{"id":"kanji_019","tema":"kanji","tipo":"input","kanjiId":"k_hito","kLevel":3,"orb":3,"q":"Escribí la lectura de <b>人</b> <span style=\"font-size:14px;color:#8b96b0\">(persona)</span>","variants":["ひと","hito"],"ex":"人 = ひと (hito). Una persona caminando, vista de costado: dos piernas dando un paso. 🚶","mnemo":"Una persona caminando, vista de costado: dos piernas dando un paso. 🚶","hint":"Una persona caminando, vista de costado: dos piernas dando un paso. 🚶"},{"id":"kanji_020","tema":"kanji","tipo":"mc","kanjiId":"k_hito","kLevel":3,"orb":3,"context":true,"q":"En la palabra <b>日本人</b>, ¿qué significa?","opts":["montaña","japonés","hoy"],"ex":"日本人 = にほんじん = japonés. El kanji 人 aparece en contexto real.","mnemo":"Una persona caminando, vista de costado: dos piernas dando un paso. 🚶","hint":"日本人 se lee にほんじん","correct":1},{"id":"kanji_021","tema":"kanji","tipo":"intro","kanjiId":"k_tsuki","kLevel":0,"kanji":"月","kana":"つき","romaji":"tsuki","sig":"luna / mes","mnemo":"Una luna creciente con dos líneas dentro. 🌙 Tsukuyomi, el dios lunar.","exW":"月よう日","exK":"げつようび","exM":"lunes"},{"id":"kanji_022","tema":"kanji","tipo":"mc","kanjiId":"k_tsuki","kLevel":1,"orb":1,"q":"¿Qué significa <b>月</b>?","opts":["luna / mes","comer","sol / día"],"ex":"月 = luna / mes. Una luna creciente con dos líneas dentro. 🌙 Tsukuyomi, el dios lunar.","mnemo":"Una luna creciente con dos líneas dentro. 🌙 Tsukuyomi, el dios lunar.","hint":"Una luna creciente con dos líneas dentro. 🌙 Tsukuyomi, el dios lunar.","correct":0},{"id":"kanji_023","tema":"kanji","tipo":"mc","kanjiId":"k_tsuki","kLevel":2,"orb":2,"q":"¿Cómo se lee <b>月</b>? <span style=\"font-size:14px;color:#8b96b0\">(luna / mes)</span>","opts":["かわ","つき","き"],"ex":"月 se lee つき (tsuki). Una luna creciente con dos líneas dentro. 🌙 Tsukuyomi, el dios lunar.","mnemo":"Una luna creciente con dos líneas dentro. 🌙 Tsukuyomi, el dios lunar.","hint":"Una luna creciente con dos líneas dentro. 🌙 Tsukuyomi, el dios lunar.","correct":1},{"id":"kanji_024","tema":"kanji","tipo":"input","kanjiId":"k_tsuki","kLevel":3,"orb":3,"q":"Escribí la lectura de <b>月</b> <span style=\"font-size:14px;color:#8b96b0\">(luna / mes)</span>","variants":["つき","tsuki"],"ex":"月 = つき (tsuki). Una luna creciente con dos líneas dentro. 🌙 Tsukuyomi, el dios lunar.","mnemo":"Una luna creciente con dos líneas dentro. 🌙 Tsukuyomi, el dios lunar.","hint":"Una luna creciente con dos líneas dentro. 🌙 Tsukuyomi, el dios lunar."},{"id":"kanji_025","tema":"kanji","tipo":"mc","kanjiId":"k_tsuki","kLevel":3,"orb":3,"context":true,"q":"En la palabra <b>月よう日</b>, ¿qué significa?","opts":["comer","lunes","japonés"],"ex":"月よう日 = げつようび = lunes. El kanji 月 aparece en contexto real.","mnemo":"Una luna creciente con dos líneas dentro. 🌙 Tsukuyomi, el dios lunar.","hint":"月よう日 se lee げつようび","correct":1},{"id":"kanji_026","tema":"kanji","tipo":"intro","kanjiId":"k_ka","kLevel":0,"kanji":"火","kana":"ひ","romaji":"hi","sig":"fuego","mnemo":"Una fogata: la chispa central con llamas saltando a los lados. 🔥","exW":"火よう日","exK":"かようび","exM":"martes"},{"id":"kanji_027","tema":"kanji","tipo":"mc","kanjiId":"k_ka","kLevel":1,"orb":1,"q":"¿Qué significa <b>火</b>?","opts":["luna / mes","árbol","fuego"],"ex":"火 = fuego. Una fogata: la chispa central con llamas saltando a los lados. 🔥","mnemo":"Una fogata: la chispa central con llamas saltando a los lados. 🔥","hint":"Una fogata: la chispa central con llamas saltando a los lados. 🔥","correct":2},{"id":"kanji_028","tema":"kanji","tipo":"mc","kanjiId":"k_ka","kLevel":2,"orb":2,"q":"¿Cómo se lee <b>火</b>? <span style=\"font-size:14px;color:#8b96b0\">(fuego)</span>","opts":["ひ","やま","ひと"],"ex":"火 se lee ひ (hi). Una fogata: la chispa central con llamas saltando a los lados. 🔥","mnemo":"Una fogata: la chispa central con llamas saltando a los lados. 🔥","hint":"Una fogata: la chispa central con llamas saltando a los lados. 🔥","correct":0},{"id":"kanji_029","tema":"kanji","tipo":"input","kanjiId":"k_ka","kLevel":3,"orb":3,"q":"Escribí la lectura de <b>火</b> <span style=\"font-size:14px;color:#8b96b0\">(fuego)</span>","variants":["ひ","hi"],"ex":"火 = ひ (hi). Una fogata: la chispa central con llamas saltando a los lados. 🔥","mnemo":"Una fogata: la chispa central con llamas saltando a los lados. 🔥","hint":"Una fogata: la chispa central con llamas saltando a los lados. 🔥"},{"id":"kanji_030","tema":"kanji","tipo":"mc","kanjiId":"k_ka","kLevel":3,"orb":3,"context":true,"q":"En la palabra <b>火よう日</b>, ¿qué significa?","opts":["martes","dinero","comer"],"ex":"火よう日 = かようび = martes. El kanji 火 aparece en contexto real.","mnemo":"Una fogata: la chispa central con llamas saltando a los lados. 🔥","hint":"火よう日 se lee かようび","correct":0},{"id":"kanji_031","tema":"kanji","tipo":"intro","kanjiId":"k_mizu","kLevel":0,"kanji":"水","kana":"みず","romaji":"mizu","sig":"agua","mnemo":"Un río fluyendo: la corriente central con salpicaduras a los lados. 💧","exW":"水よう日","exK":"すいようび","exM":"miércoles"},{"id":"kanji_032","tema":"kanji","tipo":"mc","kanjiId":"k_mizu","kLevel":1,"orb":1,"q":"¿Qué significa <b>水</b>?","opts":["ahora","venir","agua"],"ex":"水 = agua. Un río fluyendo: la corriente central con salpicaduras a los lados. 💧","mnemo":"Un río fluyendo: la corriente central con salpicaduras a los lados. 💧","hint":"Un río fluyendo: la corriente central con salpicaduras a los lados. 💧","correct":2},{"id":"kanji_033","tema":"kanji","tipo":"mc","kanjiId":"k_mizu","kLevel":2,"orb":2,"q":"¿Cómo se lee <b>水</b>? <span style=\"font-size:14px;color:#8b96b0\">(agua)</span>","opts":["みず","ひと","やま"],"ex":"水 se lee みず (mizu). Un río fluyendo: la corriente central con salpicaduras a los lados. 💧","mnemo":"Un río fluyendo: la corriente central con salpicaduras a los lados. 💧","hint":"Un río fluyendo: la corriente central con salpicaduras a los lados. 💧","correct":0},{"id":"kanji_034","tema":"kanji","tipo":"input","kanjiId":"k_mizu","kLevel":3,"orb":3,"q":"Escribí la lectura de <b>水</b> <span style=\"font-size:14px;color:#8b96b0\">(agua)</span>","variants":["みず","mizu"],"ex":"水 = みず (mizu). Un río fluyendo: la corriente central con salpicaduras a los lados. 💧","mnemo":"Un río fluyendo: la corriente central con salpicaduras a los lados. 💧","hint":"Un río fluyendo: la corriente central con salpicaduras a los lados. 💧"},{"id":"kanji_035","tema":"kanji","tipo":"mc","kanjiId":"k_mizu","kLevel":3,"orb":3,"context":true,"q":"En la palabra <b>水よう日</b>, ¿qué significa?","opts":["martes","comer","miércoles"],"ex":"水よう日 = すいようび = miércoles. El kanji 水 aparece en contexto real.","mnemo":"Un río fluyendo: la corriente central con salpicaduras a los lados. 💧","hint":"水よう日 se lee すいようび","correct":2},{"id":"kanji_036","tema":"kanji","tipo":"intro","kanjiId":"k_kin","kLevel":0,"kanji":"金","kana":"きん","romaji":"kin","sig":"oro / dinero","mnemo":"Un rey (王) con dos pepitas de oro brillando bajo un techo. 👑✨","exW":"お金","exK":"おかね","exM":"dinero"},{"id":"kanji_037","tema":"kanji","tipo":"mc","kanjiId":"k_kin","kLevel":1,"orb":1,"q":"¿Qué significa <b>金</b>?","opts":["sol / día","oro / dinero","pequeño"],"ex":"金 = oro / dinero. Un rey (王) con dos pepitas de oro brillando bajo un techo. 👑✨","mnemo":"Un rey (王) con dos pepitas de oro brillando bajo un techo. 👑✨","hint":"Un rey (王) con dos pepitas de oro brillando bajo un techo. 👑✨","correct":1},{"id":"kanji_038","tema":"kanji","tipo":"mc","kanjiId":"k_kin","kLevel":2,"orb":2,"q":"¿Cómo se lee <b>金</b>? <span style=\"font-size:14px;color:#8b96b0\">(oro / dinero)</span>","opts":["き","つち","きん"],"ex":"金 se lee きん (kin). Un rey (王) con dos pepitas de oro brillando bajo un techo. 👑✨","mnemo":"Un rey (王) con dos pepitas de oro brillando bajo un techo. 👑✨","hint":"Un rey (王) con dos pepitas de oro brillando bajo un techo. 👑✨","correct":2},{"id":"kanji_039","tema":"kanji","tipo":"input","kanjiId":"k_kin","kLevel":3,"orb":3,"q":"Escribí la lectura de <b>金</b> <span style=\"font-size:14px;color:#8b96b0\">(oro / dinero)</span>","variants":["きん","kin"],"ex":"金 = きん (kin). Un rey (王) con dos pepitas de oro brillando bajo un techo. 👑✨","mnemo":"Un rey (王) con dos pepitas de oro brillando bajo un techo. 👑✨","hint":"Un rey (王) con dos pepitas de oro brillando bajo un techo. 👑✨"},{"id":"kanji_040","tema":"kanji","tipo":"mc","kanjiId":"k_kin","kLevel":3,"orb":3,"context":true,"q":"En la palabra <b>お金</b>, ¿qué significa?","opts":["lunes","dinero","japonés"],"ex":"お金 = おかね = dinero. El kanji 金 aparece en contexto real.","mnemo":"Un rey (王) con dos pepitas de oro brillando bajo un techo. 👑✨","hint":"お金 se lee おかね","correct":1},{"id":"kanji_041","tema":"kanji","tipo":"intro","kanjiId":"k_do","kLevel":0,"kanji":"土","kana":"つち","romaji":"tsuchi","sig":"tierra","mnemo":"Un brote saliendo del suelo: una cruz plantada en la tierra. 🌱","exW":"土よう日","exK":"どようび","exM":"sábado"},{"id":"kanji_042","tema":"kanji","tipo":"mc","kanjiId":"k_do","kLevel":1,"orb":1,"q":"¿Qué significa <b>土</b>?","opts":["agua","tierra","montaña"],"ex":"土 = tierra. Un brote saliendo del suelo: una cruz plantada en la tierra. 🌱","mnemo":"Un brote saliendo del suelo: una cruz plantada en la tierra. 🌱","hint":"Un brote saliendo del suelo: una cruz plantada en la tierra. 🌱","correct":1},{"id":"kanji_043","tema":"kanji","tipo":"mc","kanjiId":"k_do","kLevel":2,"orb":2,"q":"¿Cómo se lee <b>土</b>? <span style=\"font-size:14px;color:#8b96b0\">(tierra)</span>","opts":["つち","にち","ひと"],"ex":"土 se lee つち (tsuchi). Un brote saliendo del suelo: una cruz plantada en la tierra. 🌱","mnemo":"Un brote saliendo del suelo: una cruz plantada en la tierra. 🌱","hint":"Un brote saliendo del suelo: una cruz plantada en la tierra. 🌱","correct":0},{"id":"kanji_044","tema":"kanji","tipo":"input","kanjiId":"k_do","kLevel":3,"orb":3,"q":"Escribí la lectura de <b>土</b> <span style=\"font-size:14px;color:#8b96b0\">(tierra)</span>","variants":["つち","tsuchi"],"ex":"土 = つち (tsuchi). Un brote saliendo del suelo: una cruz plantada en la tierra. 🌱","mnemo":"Un brote saliendo del suelo: una cruz plantada en la tierra. 🌱","hint":"Un brote saliendo del suelo: una cruz plantada en la tierra. 🌱"},{"id":"kanji_045","tema":"kanji","tipo":"mc","kanjiId":"k_do","kLevel":3,"orb":3,"context":true,"q":"En la palabra <b>土よう日</b>, ¿qué significa?","opts":["hoy","dinero","sábado"],"ex":"土よう日 = どようび = sábado. El kanji 土 aparece en contexto real.","mnemo":"Un brote saliendo del suelo: una cruz plantada en la tierra. 🌱","hint":"土よう日 se lee どようび","correct":2},{"id":"kanji_046","tema":"kanji","tipo":"intro","kanjiId":"k_oo","kLevel":0,"kanji":"大","kana":"おお","romaji":"oo","sig":"grande","mnemo":"Una persona (人) con los brazos MUY abiertos gritando \"¡así de grande!\". 🙆","exW":"大きい","exK":"おおきい","exM":"grande"},{"id":"kanji_047","tema":"kanji","tipo":"mc","kanjiId":"k_oo","kLevel":1,"orb":1,"q":"¿Qué significa <b>大</b>?","opts":["venir","grande","río"],"ex":"大 = grande. Una persona (人) con los brazos MUY abiertos gritando \"¡así de grande!\". 🙆","mnemo":"Una persona (人) con los brazos MUY abiertos gritando \"¡así de grande!\". 🙆","hint":"Una persona (人) con los brazos MUY abiertos gritando \"¡así de grande!\". 🙆","correct":1},{"id":"kanji_048","tema":"kanji","tipo":"mc","kanjiId":"k_oo","kLevel":2,"orb":2,"q":"¿Cómo se lee <b>大</b>? <span style=\"font-size:14px;color:#8b96b0\">(grande)</span>","opts":["なか","おお","き"],"ex":"大 se lee おお (oo). Una persona (人) con los brazos MUY abiertos gritando \"¡así de grande!\". 🙆","mnemo":"Una persona (人) con los brazos MUY abiertos gritando \"¡así de grande!\". 🙆","hint":"Una persona (人) con los brazos MUY abiertos gritando \"¡así de grande!\". 🙆","correct":1},{"id":"kanji_049","tema":"kanji","tipo":"input","kanjiId":"k_oo","kLevel":3,"orb":3,"q":"Escribí la lectura de <b>大</b> <span style=\"font-size:14px;color:#8b96b0\">(grande)</span>","variants":["おお","oo"],"ex":"大 = おお (oo). Una persona (人) con los brazos MUY abiertos gritando \"¡así de grande!\". 🙆","mnemo":"Una persona (人) con los brazos MUY abiertos gritando \"¡así de grande!\". 🙆","hint":"Una persona (人) con los brazos MUY abiertos gritando \"¡así de grande!\". 🙆"},{"id":"kanji_050","tema":"kanji","tipo":"mc","kanjiId":"k_oo","kLevel":3,"orb":3,"context":true,"q":"En la palabra <b>大きい</b>, ¿qué significa?","opts":["grande","comer","lunes"],"ex":"大きい = おおきい = grande. El kanji 大 aparece en contexto real.","mnemo":"Una persona (人) con los brazos MUY abiertos gritando \"¡así de grande!\". 🙆","hint":"大きい se lee おおきい","correct":0},{"id":"kanji_051","tema":"kanji","tipo":"intro","kanjiId":"k_chi","kLevel":0,"kanji":"小","kana":"ちい","romaji":"chii","sig":"pequeño","mnemo":"Algo diminuto en el centro con dos chispitas: pequeño, casi nada. 🤏","exW":"小さい","exK":"ちいさい","exM":"pequeño"},{"id":"kanji_052","tema":"kanji","tipo":"mc","kanjiId":"k_chi","kLevel":1,"orb":1,"q":"¿Qué significa <b>小</b>?","opts":["luna / mes","río","pequeño"],"ex":"小 = pequeño. Algo diminuto en el centro con dos chispitas: pequeño, casi nada. 🤏","mnemo":"Algo diminuto en el centro con dos chispitas: pequeño, casi nada. 🤏","hint":"Algo diminuto en el centro con dos chispitas: pequeño, casi nada. 🤏","correct":2},{"id":"kanji_053","tema":"kanji","tipo":"mc","kanjiId":"k_chi","kLevel":2,"orb":2,"q":"¿Cómo se lee <b>小</b>? <span style=\"font-size:14px;color:#8b96b0\">(pequeño)</span>","opts":["ちい","なか","やま"],"ex":"小 se lee ちい (chii). Algo diminuto en el centro con dos chispitas: pequeño, casi nada. 🤏","mnemo":"Algo diminuto en el centro con dos chispitas: pequeño, casi nada. 🤏","hint":"Algo diminuto en el centro con dos chispitas: pequeño, casi nada. 🤏","correct":0},{"id":"kanji_054","tema":"kanji","tipo":"input","kanjiId":"k_chi","kLevel":3,"orb":3,"q":"Escribí la lectura de <b>小</b> <span style=\"font-size:14px;color:#8b96b0\">(pequeño)</span>","variants":["ちい","chii"],"ex":"小 = ちい (chii). Algo diminuto en el centro con dos chispitas: pequeño, casi nada. 🤏","mnemo":"Algo diminuto en el centro con dos chispitas: pequeño, casi nada. 🤏","hint":"Algo diminuto en el centro con dos chispitas: pequeño, casi nada. 🤏"},{"id":"kanji_055","tema":"kanji","tipo":"mc","kanjiId":"k_chi","kLevel":3,"orb":3,"context":true,"q":"En la palabra <b>小さい</b>, ¿qué significa?","opts":["lunes","montaña","pequeño"],"ex":"小さい = ちいさい = pequeño. El kanji 小 aparece en contexto real.","mnemo":"Algo diminuto en el centro con dos chispitas: pequeño, casi nada. 🤏","hint":"小さい se lee ちいさい","correct":2},{"id":"kanji_056","tema":"kanji","tipo":"intro","kanjiId":"k_kawa","kLevel":0,"kanji":"川","kana":"かわ","romaji":"kawa","sig":"río","mnemo":"Tres líneas de agua corriendo en paralelo. 🏞️ El agua baja por el cauce.","exW":"川","exK":"かわ","exM":"río"},{"id":"kanji_057","tema":"kanji","tipo":"mc","kanjiId":"k_kawa","kLevel":1,"orb":1,"q":"¿Qué significa <b>川</b>?","opts":["río","pequeño","persona"],"ex":"川 = río. Tres líneas de agua corriendo en paralelo. 🏞️ El agua baja por el cauce.","mnemo":"Tres líneas de agua corriendo en paralelo. 🏞️ El agua baja por el cauce.","hint":"Tres líneas de agua corriendo en paralelo. 🏞️ El agua baja por el cauce.","correct":0},{"id":"kanji_058","tema":"kanji","tipo":"mc","kanjiId":"k_kawa","kLevel":2,"orb":2,"q":"¿Cómo se lee <b>川</b>? <span style=\"font-size:14px;color:#8b96b0\">(río)</span>","opts":["にち","かわ","た"],"ex":"川 se lee かわ (kawa). Tres líneas de agua corriendo en paralelo. 🏞️ El agua baja por el cauce.","mnemo":"Tres líneas de agua corriendo en paralelo. 🏞️ El agua baja por el cauce.","hint":"Tres líneas de agua corriendo en paralelo. 🏞️ El agua baja por el cauce.","correct":1},{"id":"kanji_059","tema":"kanji","tipo":"input","kanjiId":"k_kawa","kLevel":3,"orb":3,"q":"Escribí la lectura de <b>川</b> <span style=\"font-size:14px;color:#8b96b0\">(río)</span>","variants":["かわ","kawa"],"ex":"川 = かわ (kawa). Tres líneas de agua corriendo en paralelo. 🏞️ El agua baja por el cauce.","mnemo":"Tres líneas de agua corriendo en paralelo. 🏞️ El agua baja por el cauce.","hint":"Tres líneas de agua corriendo en paralelo. 🏞️ El agua baja por el cauce."},{"id":"kanji_060","tema":"kanji","tipo":"mc","kanjiId":"k_kawa","kLevel":3,"orb":3,"context":true,"q":"En la palabra <b>川</b>, ¿qué significa?","opts":["dinero","japonés","río"],"ex":"川 = かわ = río. El kanji 川 aparece en contexto real.","mnemo":"Tres líneas de agua corriendo en paralelo. 🏞️ El agua baja por el cauce.","hint":"川 se lee かわ","correct":2},{"id":"kanji_061","tema":"kanji","tipo":"intro","kanjiId":"k_ta","kLevel":0,"kanji":"食","kana":"た","romaji":"ta","sig":"comer","mnemo":"Un techo sobre una mesa llena de comida. 🍚 食べる = comer.","exW":"食べる","exK":"たべる","exM":"comer"},{"id":"kanji_062","tema":"kanji","tipo":"mc","kanjiId":"k_ta","kLevel":1,"orb":1,"q":"¿Qué significa <b>食</b>?","opts":["ahora","comer","montaña"],"ex":"食 = comer. Un techo sobre una mesa llena de comida. 🍚 食べる = comer.","mnemo":"Un techo sobre una mesa llena de comida. 🍚 食べる = comer.","hint":"Un techo sobre una mesa llena de comida. 🍚 食べる = comer.","correct":1},{"id":"kanji_063","tema":"kanji","tipo":"mc","kanjiId":"k_ta","kLevel":2,"orb":2,"q":"¿Cómo se lee <b>食</b>? <span style=\"font-size:14px;color:#8b96b0\">(comer)</span>","opts":["いま","た","みず"],"ex":"食 se lee た (ta). Un techo sobre una mesa llena de comida. 🍚 食べる = comer.","mnemo":"Un techo sobre una mesa llena de comida. 🍚 食べる = comer.","hint":"Un techo sobre una mesa llena de comida. 🍚 食べる = comer.","correct":1},{"id":"kanji_064","tema":"kanji","tipo":"input","kanjiId":"k_ta","kLevel":3,"orb":3,"q":"Escribí la lectura de <b>食</b> <span style=\"font-size:14px;color:#8b96b0\">(comer)</span>","variants":["た","ta"],"ex":"食 = た (ta). Un techo sobre una mesa llena de comida. 🍚 食べる = comer.","mnemo":"Un techo sobre una mesa llena de comida. 🍚 食べる = comer.","hint":"Un techo sobre una mesa llena de comida. 🍚 食べる = comer."},{"id":"kanji_065","tema":"kanji","tipo":"mc","kanjiId":"k_ta","kLevel":3,"orb":3,"context":true,"q":"En la palabra <b>食べる</b>, ¿qué significa?","opts":["comer","lunes","montaña"],"ex":"食べる = たべる = comer. El kanji 食 aparece en contexto real.","mnemo":"Un techo sobre una mesa llena de comida. 🍚 食べる = comer.","hint":"食べる se lee たべる","correct":0},{"id":"kanji_066","tema":"kanji","tipo":"intro","kanjiId":"k_no","kLevel":0,"kanji":"飲","kana":"の","romaji":"no","sig":"beber","mnemo":"Comer (食) al lado de alguien con la boca abierta bebiendo. 🥤","exW":"飲む","exK":"のむ","exM":"beber"},{"id":"kanji_067","tema":"kanji","tipo":"mc","kanjiId":"k_no","kLevel":1,"orb":1,"q":"¿Qué significa <b>飲</b>?","opts":["venir","beber","luna / mes"],"ex":"飲 = beber. Comer (食) al lado de alguien con la boca abierta bebiendo. 🥤","mnemo":"Comer (食) al lado de alguien con la boca abierta bebiendo. 🥤","hint":"Comer (食) al lado de alguien con la boca abierta bebiendo. 🥤","correct":1},{"id":"kanji_068","tema":"kanji","tipo":"mc","kanjiId":"k_no","kLevel":2,"orb":2,"q":"¿Cómo se lee <b>飲</b>? <span style=\"font-size:14px;color:#8b96b0\">(beber)</span>","opts":["き","の","た"],"ex":"飲 se lee の (no). Comer (食) al lado de alguien con la boca abierta bebiendo. 🥤","mnemo":"Comer (食) al lado de alguien con la boca abierta bebiendo. 🥤","hint":"Comer (食) al lado de alguien con la boca abierta bebiendo. 🥤","correct":1},{"id":"kanji_069","tema":"kanji","tipo":"input","kanjiId":"k_no","kLevel":3,"orb":3,"q":"Escribí la lectura de <b>飲</b> <span style=\"font-size:14px;color:#8b96b0\">(beber)</span>","variants":["の","no"],"ex":"飲 = の (no). Comer (食) al lado de alguien con la boca abierta bebiendo. 🥤","mnemo":"Comer (食) al lado de alguien con la boca abierta bebiendo. 🥤","hint":"Comer (食) al lado de alguien con la boca abierta bebiendo. 🥤"},{"id":"kanji_070","tema":"kanji","tipo":"mc","kanjiId":"k_no","kLevel":3,"orb":3,"context":true,"q":"En la palabra <b>飲む</b>, ¿qué significa?","opts":["beber","lunes","martes"],"ex":"飲む = のむ = beber. El kanji 飲 aparece en contexto real.","mnemo":"Comer (食) al lado de alguien con la boca abierta bebiendo. 🥤","hint":"飲む se lee のむ","correct":0},{"id":"kanji_071","tema":"kanji","tipo":"intro","kanjiId":"k_mi","kLevel":0,"kanji":"見","kana":"み","romaji":"mi","sig":"ver / mirar","mnemo":"Un ojo (目) con piernas: el ojo que camina y observa todo. 👁️","exW":"見る","exK":"みる","exM":"ver"},{"id":"kanji_072","tema":"kanji","tipo":"mc","kanjiId":"k_mi","kLevel":1,"orb":1,"q":"¿Qué significa <b>見</b>?","opts":["pequeño","ver / mirar","luna / mes"],"ex":"見 = ver / mirar. Un ojo (目) con piernas: el ojo que camina y observa todo. 👁️","mnemo":"Un ojo (目) con piernas: el ojo que camina y observa todo. 👁️","hint":"Un ojo (目) con piernas: el ojo que camina y observa todo. 👁️","correct":1},{"id":"kanji_073","tema":"kanji","tipo":"mc","kanjiId":"k_mi","kLevel":2,"orb":2,"q":"¿Cómo se lee <b>見</b>? <span style=\"font-size:14px;color:#8b96b0\">(ver / mirar)</span>","opts":["た","み","ひ"],"ex":"見 se lee み (mi). Un ojo (目) con piernas: el ojo que camina y observa todo. 👁️","mnemo":"Un ojo (目) con piernas: el ojo que camina y observa todo. 👁️","hint":"Un ojo (目) con piernas: el ojo que camina y observa todo. 👁️","correct":1},{"id":"kanji_074","tema":"kanji","tipo":"input","kanjiId":"k_mi","kLevel":3,"orb":3,"q":"Escribí la lectura de <b>見</b> <span style=\"font-size:14px;color:#8b96b0\">(ver / mirar)</span>","variants":["み","mi"],"ex":"見 = み (mi). Un ojo (目) con piernas: el ojo que camina y observa todo. 👁️","mnemo":"Un ojo (目) con piernas: el ojo que camina y observa todo. 👁️","hint":"Un ojo (目) con piernas: el ojo que camina y observa todo. 👁️"},{"id":"kanji_075","tema":"kanji","tipo":"mc","kanjiId":"k_mi","kLevel":3,"orb":3,"context":true,"q":"En la palabra <b>見る</b>, ¿qué significa?","opts":["jueves","ver","montaña"],"ex":"見る = みる = ver. El kanji 見 aparece en contexto real.","mnemo":"Un ojo (目) con piernas: el ojo que camina y observa todo. 👁️","hint":"見る se lee みる","correct":1},{"id":"kanji_076","tema":"kanji","tipo":"intro","kanjiId":"k_i","kLevel":0,"kanji":"行","kana":"い","romaji":"i","sig":"ir","mnemo":"Un cruce de caminos: dos sendas que se separan. Vas por una. 🛣️","exW":"行く","exK":"いく","exM":"ir"},{"id":"kanji_077","tema":"kanji","tipo":"mc","kanjiId":"k_i","kLevel":1,"orb":1,"q":"¿Qué significa <b>行</b>?","opts":["luna / mes","ver / mirar","ir"],"ex":"行 = ir. Un cruce de caminos: dos sendas que se separan. Vas por una. 🛣️","mnemo":"Un cruce de caminos: dos sendas que se separan. Vas por una. 🛣️","hint":"Un cruce de caminos: dos sendas que se separan. Vas por una. 🛣️","correct":2},{"id":"kanji_078","tema":"kanji","tipo":"mc","kanjiId":"k_i","kLevel":2,"orb":2,"q":"¿Cómo se lee <b>行</b>? <span style=\"font-size:14px;color:#8b96b0\">(ir)</span>","opts":["ほん","ひと","い"],"ex":"行 se lee い (i). Un cruce de caminos: dos sendas que se separan. Vas por una. 🛣️","mnemo":"Un cruce de caminos: dos sendas que se separan. Vas por una. 🛣️","hint":"Un cruce de caminos: dos sendas que se separan. Vas por una. 🛣️","correct":2},{"id":"kanji_079","tema":"kanji","tipo":"input","kanjiId":"k_i","kLevel":3,"orb":3,"q":"Escribí la lectura de <b>行</b> <span style=\"font-size:14px;color:#8b96b0\">(ir)</span>","variants":["い","i"],"ex":"行 = い (i). Un cruce de caminos: dos sendas que se separan. Vas por una. 🛣️","mnemo":"Un cruce de caminos: dos sendas que se separan. Vas por una. 🛣️","hint":"Un cruce de caminos: dos sendas que se separan. Vas por una. 🛣️"},{"id":"kanji_080","tema":"kanji","tipo":"mc","kanjiId":"k_i","kLevel":3,"orb":3,"context":true,"q":"En la palabra <b>行く</b>, ¿qué significa?","opts":["martes","jueves","ir"],"ex":"行く = いく = ir. El kanji 行 aparece en contexto real.","mnemo":"Un cruce de caminos: dos sendas que se separan. Vas por una. 🛣️","hint":"行く se lee いく","correct":2},{"id":"kanji_081","tema":"kanji","tipo":"intro","kanjiId":"k_ku","kLevel":0,"kanji":"来","kana":"く","romaji":"ku","sig":"venir","mnemo":"Un árbol con gente colgando: todos VIENEN hacia el árbol. 🌾","exW":"来る","exK":"くる","exM":"venir"},{"id":"kanji_082","tema":"kanji","tipo":"mc","kanjiId":"k_ku","kLevel":1,"orb":1,"q":"¿Qué significa <b>来</b>?","opts":["tierra","venir","medio / dentro"],"ex":"来 = venir. Un árbol con gente colgando: todos VIENEN hacia el árbol. 🌾","mnemo":"Un árbol con gente colgando: todos VIENEN hacia el árbol. 🌾","hint":"Un árbol con gente colgando: todos VIENEN hacia el árbol. 🌾","correct":1},{"id":"kanji_083","tema":"kanji","tipo":"mc","kanjiId":"k_ku","kLevel":2,"orb":2,"q":"¿Cómo se lee <b>来</b>? <span style=\"font-size:14px;color:#8b96b0\">(venir)</span>","opts":["み","く","い"],"ex":"来 se lee く (ku). Un árbol con gente colgando: todos VIENEN hacia el árbol. 🌾","mnemo":"Un árbol con gente colgando: todos VIENEN hacia el árbol. 🌾","hint":"Un árbol con gente colgando: todos VIENEN hacia el árbol. 🌾","correct":1},{"id":"kanji_084","tema":"kanji","tipo":"input","kanjiId":"k_ku","kLevel":3,"orb":3,"q":"Escribí la lectura de <b>来</b> <span style=\"font-size:14px;color:#8b96b0\">(venir)</span>","variants":["く","ku"],"ex":"来 = く (ku). Un árbol con gente colgando: todos VIENEN hacia el árbol. 🌾","mnemo":"Un árbol con gente colgando: todos VIENEN hacia el árbol. 🌾","hint":"Un árbol con gente colgando: todos VIENEN hacia el árbol. 🌾"},{"id":"kanji_085","tema":"kanji","tipo":"mc","kanjiId":"k_ku","kLevel":3,"orb":3,"context":true,"q":"En la palabra <b>来る</b>, ¿qué significa?","opts":["hoy","venir","martes"],"ex":"来る = くる = venir. El kanji 来 aparece en contexto real.","mnemo":"Un árbol con gente colgando: todos VIENEN hacia el árbol. 🌾","hint":"来る se lee くる","correct":1},{"id":"kanji_086","tema":"kanji","tipo":"intro","kanjiId":"k_hon","kLevel":0,"kanji":"本","kana":"ほん","romaji":"hon","sig":"libro / origen","mnemo":"Un árbol (木) con una raíz marcada abajo: el ORIGEN, la raíz. 📖","exW":"日本","exK":"にほん","exM":"Japón"},{"id":"kanji_087","tema":"kanji","tipo":"mc","kanjiId":"k_hon","kLevel":1,"orb":1,"q":"¿Qué significa <b>本</b>?","opts":["persona","río","libro / origen"],"ex":"本 = libro / origen. Un árbol (木) con una raíz marcada abajo: el ORIGEN, la raíz. 📖","mnemo":"Un árbol (木) con una raíz marcada abajo: el ORIGEN, la raíz. 📖","hint":"Un árbol (木) con una raíz marcada abajo: el ORIGEN, la raíz. 📖","correct":2},{"id":"kanji_088","tema":"kanji","tipo":"mc","kanjiId":"k_hon","kLevel":2,"orb":2,"q":"¿Cómo se lee <b>本</b>? <span style=\"font-size:14px;color:#8b96b0\">(libro / origen)</span>","opts":["かわ","ほん","つき"],"ex":"本 se lee ほん (hon). Un árbol (木) con una raíz marcada abajo: el ORIGEN, la raíz. 📖","mnemo":"Un árbol (木) con una raíz marcada abajo: el ORIGEN, la raíz. 📖","hint":"Un árbol (木) con una raíz marcada abajo: el ORIGEN, la raíz. 📖","correct":1},{"id":"kanji_089","tema":"kanji","tipo":"input","kanjiId":"k_hon","kLevel":3,"orb":3,"q":"Escribí la lectura de <b>本</b> <span style=\"font-size:14px;color:#8b96b0\">(libro / origen)</span>","variants":["ほん","hon"],"ex":"本 = ほん (hon). Un árbol (木) con una raíz marcada abajo: el ORIGEN, la raíz. 📖","mnemo":"Un árbol (木) con una raíz marcada abajo: el ORIGEN, la raíz. 📖","hint":"Un árbol (木) con una raíz marcada abajo: el ORIGEN, la raíz. 📖"},{"id":"kanji_090","tema":"kanji","tipo":"mc","kanjiId":"k_hon","kLevel":3,"orb":3,"context":true,"q":"En la palabra <b>日本</b>, ¿qué significa?","opts":["Japón","japonés","lunes"],"ex":"日本 = にほん = Japón. El kanji 本 aparece en contexto real.","mnemo":"Un árbol (木) con una raíz marcada abajo: el ORIGEN, la raíz. 📖","hint":"日本 se lee にほん","correct":0},{"id":"kanji_091","tema":"kanji","tipo":"intro","kanjiId":"k_ima","kLevel":0,"kanji":"今","kana":"いま","romaji":"ima","sig":"ahora","mnemo":"Un techo sobre el presente: bajo este techo, AHORA. ⏳","exW":"今日","exK":"きょう","exM":"hoy"},{"id":"kanji_092","tema":"kanji","tipo":"mc","kanjiId":"k_ima","kLevel":1,"orb":1,"q":"¿Qué significa <b>今</b>?","opts":["río","árbol","ahora"],"ex":"今 = ahora. Un techo sobre el presente: bajo este techo, AHORA. ⏳","mnemo":"Un techo sobre el presente: bajo este techo, AHORA. ⏳","hint":"Un techo sobre el presente: bajo este techo, AHORA. ⏳","correct":2},{"id":"kanji_093","tema":"kanji","tipo":"mc","kanjiId":"k_ima","kLevel":2,"orb":2,"q":"¿Cómo se lee <b>今</b>? <span style=\"font-size:14px;color:#8b96b0\">(ahora)</span>","opts":["いま","にち","く"],"ex":"今 se lee いま (ima). Un techo sobre el presente: bajo este techo, AHORA. ⏳","mnemo":"Un techo sobre el presente: bajo este techo, AHORA. ⏳","hint":"Un techo sobre el presente: bajo este techo, AHORA. ⏳","correct":0},{"id":"kanji_094","tema":"kanji","tipo":"input","kanjiId":"k_ima","kLevel":3,"orb":3,"q":"Escribí la lectura de <b>今</b> <span style=\"font-size:14px;color:#8b96b0\">(ahora)</span>","variants":["いま","ima"],"ex":"今 = いま (ima). Un techo sobre el presente: bajo este techo, AHORA. ⏳","mnemo":"Un techo sobre el presente: bajo este techo, AHORA. ⏳","hint":"Un techo sobre el presente: bajo este techo, AHORA. ⏳"},{"id":"kanji_095","tema":"kanji","tipo":"mc","kanjiId":"k_ima","kLevel":3,"orb":3,"context":true,"q":"En la palabra <b>今日</b>, ¿qué significa?","opts":["montaña","japonés","hoy"],"ex":"今日 = きょう = hoy. El kanji 今 aparece en contexto real.","mnemo":"Un techo sobre el presente: bajo este techo, AHORA. ⏳","hint":"今日 se lee きょう","correct":2},{"id":"kanji_096","tema":"kanji","tipo":"intro","kanjiId":"k_naka","kLevel":0,"kanji":"中","kana":"なか","romaji":"naka","sig":"medio / dentro","mnemo":"Una flecha atravesando el CENTRO de una caja. 🎯","exW":"中学","exK":"ちゅうがく","exM":"secundaria"},{"id":"kanji_097","tema":"kanji","tipo":"mc","kanjiId":"k_naka","kLevel":1,"orb":1,"q":"¿Qué significa <b>中</b>?","opts":["medio / dentro","beber","árbol"],"ex":"中 = medio / dentro. Una flecha atravesando el CENTRO de una caja. 🎯","mnemo":"Una flecha atravesando el CENTRO de una caja. 🎯","hint":"Una flecha atravesando el CENTRO de una caja. 🎯","correct":0},{"id":"kanji_098","tema":"kanji","tipo":"mc","kanjiId":"k_naka","kLevel":2,"orb":2,"q":"¿Cómo se lee <b>中</b>? <span style=\"font-size:14px;color:#8b96b0\">(medio / dentro)</span>","opts":["なか","つち","みず"],"ex":"中 se lee なか (naka). Una flecha atravesando el CENTRO de una caja. 🎯","mnemo":"Una flecha atravesando el CENTRO de una caja. 🎯","hint":"Una flecha atravesando el CENTRO de una caja. 🎯","correct":0},{"id":"kanji_099","tema":"kanji","tipo":"input","kanjiId":"k_naka","kLevel":3,"orb":3,"q":"Escribí la lectura de <b>中</b> <span style=\"font-size:14px;color:#8b96b0\">(medio / dentro)</span>","variants":["なか","naka"],"ex":"中 = なか (naka). Una flecha atravesando el CENTRO de una caja. 🎯","mnemo":"Una flecha atravesando el CENTRO de una caja. 🎯","hint":"Una flecha atravesando el CENTRO de una caja. 🎯"},{"id":"kanji_100","tema":"kanji","tipo":"mc","kanjiId":"k_naka","kLevel":3,"orb":3,"context":true,"q":"En la palabra <b>中学</b>, ¿qué significa?","opts":["japonés","lunes","secundaria"],"ex":"中学 = ちゅうがく = secundaria. El kanji 中 aparece en contexto real.","mnemo":"Una flecha atravesando el CENTRO de una caja. 🎯","hint":"中学 se lee ちゅうがく","correct":2},{"id":"kanji_101","tema":"kanji","tipo":"match","kLevel":2,"orb":2,"kanjiGroup":["k_hi","k_tsuki","k_ka","k_mizu"],"q":"Conectá cada kanji con su lectura en kana.","pairs":[["日","にち"],["月","つき"],["火","ひ"],["水","みず"]],"ex":"Los kanji de los días: 日月火水木金土."},{"id":"kanji_102","tema":"kanji","tipo":"match","kLevel":2,"orb":2,"kanjiGroup":["k_ki","k_kin","k_do","k_hito"],"q":"Conectá cada kanji con su lectura en kana.","pairs":[["木","き"],["金","きん"],["土","つち"],["人","ひと"]],"ex":"木=árbol, 金=oro, 土=tierra, 人=persona."},{"id":"kanji_103","tema":"kanji","tipo":"match","kLevel":1,"orb":1,"kanjiGroup":["k_oo","k_chi","k_yama","k_kawa"],"q":"Conectá cada kanji con su significado.","pairs":[["大","grande"],["小","pequeño"],["山","montaña"],["川","río"]],"ex":"大きい (grande) y 小さい (pequeño) son adjetivos comunes."},{"id":"kanji_104","tema":"kanji","tipo":"match","kLevel":3,"orb":3,"context":true,"kanjiGroup":["k_hi","k_hon","k_ta","k_mi"],"q":"Conectá cada palabra con su lectura (kanji en contexto).","pairs":[["日本","にほん"],["本","ほん"],["食べる","たべる"],["見る","みる"]],"ex":"Kanji dentro de palabras reales."}];
+const SCROLLS = {"verbos":{"icon":"⚔️","title":"Los Verbos y sus 3 Grupos","jp":"動詞","resumen":"Todo verbo pertenece a 1 de 3 grupos. Grupo 3 = solo する y くる. Grupo 2 = termina en る con い/え antes (たべる, みる). Grupo 1 = el resto. Para el presente: G1 cambia la última sílaba a sonido-i + ます; G2 quita る + ます; G3 memorizar (する→します, くる→きます).","body":[{"h":"¿Por qué importan los grupos?","p":"En japonés, cómo conjugás un verbo depende de a qué grupo pertenece. No hay forma de conjugar bien sin saber esto primero. La buena noticia: son solo 3 grupos, y son muy regulares (mucho más que el español). Una vez que ves el patrón, hace clic para siempre."},{"h":"Grupo 3 — Los irregulares (los más fáciles de identificar)","p":"Solo hay DOS verbos en este grupo: する (hacer) y くる (venir). Eso es todo. No siguen ninguna regla, hay que memorizarlos. Pero como se usan tantísimo, los vas a recordar sin esfuerzo. する → します (presente), しました (pasado). くる → きます, きました. Ojo: くる cambia la raíz completa, く→き."},{"h":"Grupo 2 — Los る-verbos (ichidan)","p":"Terminan en る, y justo antes de ese る hay un sonido \"i\" o \"e\". Ejemplos: たべる (ta-BE-ru, hay \"e\"), みる (mi-ru, hay \"i\"), ねる (ne-ru), おきる (oki-ru). Conjugar es facilísimo: sacás el る y agregás la terminación. たべる → たべ + ます = たべます. たべ + ました = たべました."},{"h":"Grupo 1 — Los う-verbos (godan)","p":"Es el grupo más grande: todos los verbos que NO son grupo 2 ni 3. Terminan en un sonido \"u\" (く, む, す, つ, ぶ, る...). Para el presente, la última sílaba cambia a su versión \"i\" y se agrega ます: のむ → のみ+ます (mu→mi). かく → かき+ます (ku→ki). はなす → はなし+ます (su→shi). いく → いき+ます."},{"h":"⚠️ Trampas del Grupo 1","p":"Algunos verbos terminan en る pero son Grupo 1, no Grupo 2: かえる (volver), はしる (correr), しる (saber), きる (cortar). Parecen G2 pero no lo son. Con la práctica los reconocés."},{"h":"Las 4 formas que dominás en este dojo","p":"Presente ＋ (ます): hago / voy a hacer. Presente − (ません): no hago. Pasado ＋ (ました): hice. Pasado − (ませんでした): no hice. Las terminaciones son SIEMPRE iguales para todos los verbos. Solo cambia lo que va antes."}]},"particulas":{"icon":"🎋","title":"Las Partículas — el esqueleto del japonés","jp":"助詞","resumen":"Las partículas marcan la función de cada palabra. を = objeto directo (lo que comés/ves). に = destino, hora exacta, destinatario. で = lugar donde ocurre la acción, medio de transporte. と = \"con quién\". は = tema. が = sujeto con énfasis.","body":[{"h":"¿Qué es una partícula?","p":"Es una sílaba corta que va DESPUÉS de una palabra y dice qué función cumple en la oración. En español usamos el orden y las preposiciones; en japonés se usan partículas. No tienen traducción exacta — se aprenden por función. Son el mayor desafío para hispanohablantes, pero también son muy lógicas."},{"h":"を — el objeto directo","p":"Marca sobre qué recae la acción. ラーメンをたべます = como ramen (ramen es lo comido). アニメをみます = veo anime. Regla simple: lo que recibe la acción del verbo lleva を."},{"h":"に — destino, hora y destinatario","p":"Tiene 3 usos clave: (1) destino de movimiento — がっこうにいきます (voy A la escuela); (2) hora exacta — しちじにおきます (me levanto A las 7); (3) destinatario — ぼくにかいて (dibujame A MÍ). Pensá en に como \"el punto al que algo llega\"."},{"h":"で — dónde ocurre la acción y con qué","p":"Marca el lugar donde pasa la acción: いえでねます (duermo EN casa), えきでまちます (espero EN la estación). También el medio: でんしゃでいきます (voy EN tren). Diferencia clave con に: に es el destino, で es dónde ocurre la acción."},{"h":"に vs で — el par que más confunde","p":"がっこうにいきます = voy A la escuela (に = destino). がっこうでべんきょうします = estudio EN la escuela (で = lugar de la acción). Si el verbo es de movimiento hacia un lugar → に. Si la acción ocurre dentro de un lugar → で."},{"h":"と, は, が","p":"と = \"con quién\": ともだちとはなす (hablo con un amigo). は = marca el tema de lo que hablás: わたしはダミです (en cuanto a mí, soy Dami). が = sujeto con énfasis o en respuesta a \"¿quién?\": だれがきましたか (¿quién vino?)."}]},"kanji":{"icon":"🏯","title":"Los Kanji — ideogramas","jp":"漢字","resumen":"Los kanji son caracteres que representan ideas, no sonidos. Cada uno tiene una o más lecturas (en kana). En este dojo cada kanji viene con su lectura al lado. Empezá reconociendo los básicos: 日月火水木金土 (días), 人大小 (persona/grande/chico), 食飲見行来 (verbos)."},"gramatica":{"icon":"🧩","title":"Armar oraciones — el orden japonés","jp":"文法","resumen":"El japonés ordena distinto al español: el VERBO va SIEMPRE al final. La estructura típica es: Tiempo + Sujeto(は) + Lugar/Con quién + Objeto(を) + Verbo. Ejemplo: きのう ともだちと にほんごを べんきょうしました (ayer, con un amigo, japonés, estudié)."},"vocab":{"icon":"📿","title":"Vocabulario base","jp":"語彙","resumen":"Palabras del día a día: comida (ごはん, みず, コーヒー), personas y lugares (ともだち, かぞく, いえ, がっこう, えき), objetos (ほん, でんしゃ). Con un vocabulario chico pero sólido ya podés armar frases reales."},"lectura":{"icon":"📜","title":"Lectura de frases","jp":"読解","resumen":"Leer es juntar todo: vocabulario + partículas + verbo conjugado. Buscá primero el verbo (al final) para saber la acción, después las partículas para saber quién hace qué. まいばんアニメをみます = todas las noches (まいばん) + anime (を) + veo (みます)."},"principito":{"icon":"⭐","title":"あのときの王子くん — El Principito","jp":"星の王子さま","resumen":"Frases reales del libro de Saint-Exupéry (traducción libre de Ōkubo Yū). El libro usa japonés simple pero poético. Vas a reconocer verbos (かく = dibujar), partículas (ぼくに = a mí) y frases célebres como 「もののなかみは、目では見えない」(lo esencial es invisible a los ojos).","body":[{"h":"¿Por qué El Principito?","p":"Porque está escrito en japonés sencillo pero real — no ejercicios de laboratorio, sino literatura de verdad. Cada frase que reconocés acá es japonés que un japonés adulto lee de corrido. Es el puente entre practicar y leer."},{"h":"La escena de la oveja","p":"El principito le pide al piloto: 「ヒツジの絵をかいて」(dibujame una oveja). Fijate: ヒツジ (oveja) + の (de) + 絵 (dibujo) + を (objeto) + かいて (dibujá). Y 「ぼくにヒツジをかいて」usa に para decir \"a MÍ\"."},{"h":"La frase del zorro","p":"La más famosa del libro: 「心でなくちゃ、よく見えない。もののなかみは、目では見えない」— \"hay que mirar con el corazón; lo esencial de las cosas no se ve con los ojos\". En este dojo la vas a encontrar como recompensa de Órbita 3."}]}};
+const SKEY = 'kageDojo_v1';
+const RANKS = [
+  {min:0,   jp:'見習い', es:'Aprendiz'},
+  {min:80,  jp:'弟子',   es:'Discípulo'},
+  {min:200, jp:'剣士',   es:'Espadachín'},
+  {min:400, jp:'武者',   es:'Guerrero'},
+  {min:700, jp:'影',     es:'Sombra'},
+  {min:1100,jp:'影帝',   es:'Emperador de las Sombras'},
+];
+const BADGES = [
+  {id:'first', ic:'🗡️', name:'Primera misión'},
+  {id:'streak3', ic:'🔥', name:'Racha de 3'},
+  {id:'streak7', ic:'🌋', name:'Racha de 7'},
+  {id:'verbos20', ic:'⚡', name:'20 verbos'},
+  {id:'errhunter', ic:'🔎', name:'3 errores detectados'},
+  {id:'orbitax', ic:'🌌', name:'Órbita X superada'},
+  {id:'principito', ic:'⭐', name:'Amigo del zorro'},
+];
+
+// ═══════════════ STORAGE ═══════════════
+function loadP(){
+  let raw=null;
+  try{ raw=localStorage.getItem(SKEY); }catch(e){}
+  if(!raw && window.storage){ /* async fallback no bloqueante: se maneja aparte */ }
+  if(raw){ try{ return migrate(JSON.parse(raw)); }catch(e){} }
+  return {name:'Dami',av:'⛩️',xp:0,days:[],badges:[],log:[],notes:[],sessions:[],res:{},errCount:0,
+    kanjiLevel:{},kanjiStreak:{},softKanji:false};
+}
+function migrate(p){
+  if(!p.kanjiLevel) p.kanjiLevel={};
+  if(!p.kanjiStreak) p.kanjiStreak={};
+  if(p.softKanji===undefined) p.softKanji=false;
+  // kanjis ya vistos (con res previo en actividades kanji) arrancan en nivel 1, sin repetir intro
+  // como el pool cambió de ids, inferimos: cualquier kanjiId sin nivel arranca en 0 (verá intro).
+  // Pero si el usuario ya tenía progreso general, damos un empujón: se maneja al vuelo en el builder.
+  return p;
+}
+function saveP(){
+  try{ localStorage.setItem(SKEY, JSON.stringify(P)); }catch(e){}
+  try{ if(window.storage&&window.storage.set) window.storage.set(SKEY, JSON.stringify(P), false); }catch(e){}
+}
+let P = loadP();
+
+// ═══════════════ HELPERS ═══════════════
+function $(s){return document.querySelector(s)}
+function show(v){
+  ['viewHome','viewMission','viewResult','viewStats','viewMore','viewScrolls','viewScrollDetail'].forEach(x=>{
+    $('#'+x).classList.toggle('hidden', x!==v);
+  });
+  $('#actionBar').classList.toggle('hidden', v!=='viewMission');
+  if(v==='viewHome') renderHome();
+  if(v==='viewStats') renderStats();
+  if(v==='viewMore') renderMore();
+  if(v==='viewScrolls') renderScrolls();
+  window.scrollTo(0,0);
+}
+const TEMA_ORDER=['verbos','particulas','kanji','gramatica','vocab','lectura','principito'];
+const TEMA_NAMES={verbos:'Verbos',particulas:'Partículas',vocab:'Vocabulario',kanji:'Kanji',gramatica:'Gramática',lectura:'Lectura',principito:'El Principito'};
+function renderScrolls(){
+  const cont=$('#scrollList');
+  cont.innerHTML=TEMA_ORDER.filter(t=>SCROLLS[t]).map(t=>{
+    const s=SCROLLS[t];
+    return '<div class="card" style="margin-bottom:12px;cursor:pointer" onclick="openScroll(\''+t+'\')">'+
+      '<div style="display:flex;align-items:center;gap:12px">'+
+      '<div style="font-size:30px">'+s.icon+'</div>'+
+      '<div style="flex:1"><div style="font-weight:800;font-size:16px">'+s.title+'</div>'+
+      '<div style="font-size:12px;color:var(--dim)"><span style="font-family:\'Noto Sans JP\'">'+s.jp+'</span> · Órbita de estudio</div></div>'+
+      '<div style="color:var(--purple-glow);font-size:20px">›</div></div></div>';
+  }).join('');
+}
+function openScroll(t){
+  const s=SCROLLS[t];
+  let html='<div class="card glow">'+
+    '<div class="center" style="margin-bottom:14px"><div style="font-size:40px">'+s.icon+'</div>'+
+    '<h1 style="font-size:20px;font-family:\'Zen Kaku Gothic New\'">'+s.title+'</h1>'+
+    '<div style="font-family:\'Noto Sans JP\';color:var(--purple-glow);font-size:15px;font-weight:700;margin-top:2px">'+s.jp+'</div></div>';
+  html+='<div class="story" style="font-size:13px">📌 Resumen: '+s.resumen+'</div>';
+  if(s.body){
+    s.body.forEach(sec=>{
+      html+='<div style="margin-top:16px"><div style="font-weight:800;color:var(--cyan);font-size:14px;margin-bottom:6px">'+sec.h+'</div>'+
+        '<div style="font-size:14px;line-height:1.65;color:var(--ink);opacity:.92">'+sec.p+'</div></div>';
+    });
+  }
+  html+='</div>';
+  html+='<div class="card mt center"><button class="btn primary small" onclick="startMissionTema(\''+t+'\')">⚔️ Practicar '+TEMA_NAMES[t]+'</button></div>';
+  $('#scrollDetail').innerHTML=html;
+  show('viewScrollDetail');
+}
+function toast(msg){
+  const t=$('#toast'); t.textContent=msg; t.classList.add('show');
+  clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),1900);
+}
+function todayStr(){ return new Date().toISOString().slice(0,10); }
+function normKana(s){
+  return (s||'').trim().replace(/[。、．，\s！!？?]/g,'')
+    .replace(/[ァ-ン]/g,c=>String.fromCharCode(c.charCodeAt(0)-0x60)); // katakana->hiragana para comparar
+}
+function rankFor(xp){ let r=RANKS[0]; for(const x of RANKS) if(xp>=x.min) r=x; return r; }
+
+// ═══════════════ EMBERS ═══════════════
+(function(){
+  const box=$('#embers');
+  for(let i=0;i<18;i++){
+    const e=document.createElement('div'); e.className='ember';
+    e.style.left=(Math.random()*100)+'%';
+    e.style.setProperty('--drift',((Math.random()*60-30))+'px');
+    const d=6+Math.random()*10; e.style.animationDuration=d+'s';
+    e.style.animationDelay=(-Math.random()*d)+'s';
+    const s=2+Math.random()*3; e.style.width=s+'px'; e.style.height=s+'px';
+    if(Math.random()>.6){ e.style.background='#22d3ee'; e.style.boxShadow='0 0 6px 2px rgba(34,211,238,.7)'; }
+    box.appendChild(e);
+  }
+})();
+
+// ═══════════════ SPARKS ═══════════════
+function sparks(x,y){
+  const cols=['#a78bfa','#22d3ee','#fbbf24','#fb7185'];
+  for(let i=0;i<14;i++){
+    const s=document.createElement('div'); s.className='spark';
+    s.style.left=x+'px'; s.style.top=y+'px';
+    s.style.background=cols[i%cols.length];
+    s.style.boxShadow='0 0 8px '+cols[i%cols.length];
+    document.body.appendChild(s);
+    const ang=Math.random()*Math.PI*2, dist=40+Math.random()*70;
+    const dx=Math.cos(ang)*dist, dy=Math.sin(ang)*dist;
+    s.animate([{transform:'translate(0,0) scale(1)',opacity:1},
+      {transform:'translate('+dx+'px,'+dy+'px) scale(0)',opacity:0}],
+      {duration:600+Math.random()*300,easing:'cubic-bezier(.2,.8,.3,1)'}).onfinish=()=>s.remove();
+  }
+}
+
+// ═══════════════ ADAPTIVE ENGINE ═══════════════
+const KANJI_IDS = [...new Set(POOL.filter(a=>a.tema==='kanji'&&a.kanjiId).map(a=>a.kanjiId))];
+
+function kLevelOf(kid){ return P.kanjiLevel[kid]!==undefined ? P.kanjiLevel[kid] : 0; }
+
+// ¿Esta actividad de kanji está habilitada según el nivel actual del kanji?
+function kanjiActEnabled(a){
+  if(a.tema!=='kanji') return true;
+  // Match agrupado: habilitado si TODOS los kanji del grupo están >= kLevel del match
+  if(a.tipo==='match' && a.kanjiGroup){
+    return a.kanjiGroup.every(kid=>kLevelOf(kid) >= a.kLevel && kLevelOf(kid)>=1);
+  }
+  if(!a.kanjiId) return true;
+  const lv = kLevelOf(a.kanjiId);
+  // Modo suave: techo en nivel 2 (nunca producción input)
+  if(P.softKanji && (a.tipo==='input')) return false;
+  if(a.tipo==='intro') return lv===0;
+  // La actividad se muestra si su kLevel coincide con el nivel actual del kanji
+  return a.kLevel===lv;
+}
+
+function weightFor(a){
+  const r = P.res[a.id];
+  let w;
+  if(r===0) w=5; else if(r===0.5) w=3; else if(r===undefined) w=2; else w=0.6;
+  // Producción (input) de kanji con nivel < 3 => peso 0 (no puede aparecer)
+  if(a.tema==='kanji' && a.tipo==='input' && a.kanjiId && kLevelOf(a.kanjiId)<3) return 0;
+  return w + Math.random()*1.5;
+}
+
+function buildSession(){
+  // ── Selección de kanji (máx 3, máx 2 nuevos, prioriza consolidar) ──
+  const kanjiActs = selectKanjiActs();
+
+  // ── Resto: no-kanji, intercalado ──
+  const nonKanji = POOL.filter(a=>a.tema!=='kanji');
+  const scored = nonKanji.map(a=>({a,w:weightFor(a)})).filter(x=>x.w>0).sort((x,y)=>y.w-x.w);
+  const pool2 = scored.slice();
+
+  const picked=[];
+  // arranca fácil (orb1 no-kanji)
+  const easyIdx = pool2.findIndex(x=>x.a.orb===1);
+  if(easyIdx>=0){ picked.push(pool2[easyIdx].a); pool2.splice(easyIdx,1); }
+
+  // insertar kanji + no-kanji intercalados, sin dos del mismo tema seguidos
+  const kanjiQueue = kanjiActs.slice();
+  let guard=0;
+  while(picked.length<8 && guard<300){
+    guard++;
+    const last=picked[picked.length-1];
+    // ¿toca kanji? distribuir kanji a lo largo de la sesión
+    const kanjiRatio = kanjiQueue.length / Math.max(1,(8-picked.length));
+    const wantKanji = kanjiQueue.length>0 && (last?.tema!=='kanji') && (Math.random()<kanjiRatio || pool2.length===0);
+    if(wantKanji){
+      picked.push(kanjiQueue.shift());
+    } else {
+      const idx=pool2.findIndex(x=>x.a.tema!==(last&&last.tema));
+      if(idx>=0){ picked.push(pool2[idx].a); pool2.splice(idx,1); }
+      else if(kanjiQueue.length && last?.tema!=='kanji'){ picked.push(kanjiQueue.shift()); }
+      else if(pool2.length){ picked.push(pool2[0].a); pool2.splice(0,1); }
+      else break;
+    }
+  }
+  // Órbita X final (orb3 no-kanji preferentemente, o kanji contexto)
+  const orbXpool = POOL.filter(a=>a.orb===3 && !picked.includes(a) && kanjiActEnabled(a) && weightFor(a)>0);
+  const challenge = orbXpool.length ? orbXpool[Math.floor(Math.random()*orbXpool.length)] : null;
+  return {acts:picked.slice(0,8), challenge};
+}
+
+// Selecciona hasta 3 actividades de kanji para la sesión, con la escalera
+function selectKanjiActs(){
+  const MAX_KANJI = 3, MAX_NEW = 2;
+  // kanjis atrasados = los que bajaron de nivel por fallo (marcados en kanjiStreak como negativo o flag)
+  // Prioridad: niveles 1-3 (consolidar) por peso; luego nuevos (nivel 0) si hay cupo y no hay atrasados
+  const enabled = POOL.filter(a=>a.tema==='kanji' && a.tipo!=='intro' && kanjiActEnabled(a) && weightFor(a)>0);
+  // agrupar por kanjiId, tomar una actividad por kanji (la de su nivel), ordenar por peso
+  const perKanji = {};
+  enabled.forEach(a=>{
+    const key = a.kanjiId || ('grp_'+(a.kanjiGroup||[]).join('_'));
+    if(!perKanji[key] || weightFor(a)>weightFor(perKanji[key])) perKanji[key]=a;
+  });
+  let consolidate = Object.values(perKanji).sort((a,b)=>weightFor(b)-weightFor(a));
+
+  const chosen = [];
+  // ¿hay kanjis "atrasados"? (nivel bajó recientemente) — los marcamos con kanjiStreak[kid]===-1
+  const hasBacklog = KANJI_IDS.some(kid=>P.kanjiStreak[kid]===-1);
+
+  // primero consolidar
+  for(const a of consolidate){
+    if(chosen.length>=MAX_KANJI) break;
+    chosen.push(a);
+  }
+  // nuevos (intro) solo si hay cupo Y no hay backlog
+  if(!hasBacklog && chosen.length<MAX_KANJI){
+    const newKanji = POOL.filter(a=>a.tipo==='intro' && kLevelOf(a.kanjiId)===0);
+    let added=0;
+    for(const a of newKanji){
+      if(chosen.length>=MAX_KANJI || added>=MAX_NEW) break;
+      chosen.push(a); added++;
+    }
+  }
+  return chosen.slice(0,MAX_KANJI);
+}
+
+// ═══════════════ MISSION FLOW ═══════════════
+let SESSION=null, IDX=0, ATTEMPT=0, SESSION_XP=0, SESSION_FIRST=0, SESSION_TOTAL=0, CURSTATE=null, INCHALLENGE=false, META_DONE=false;
+
+let SHOWN_SUMMARIES=[]; // temas cuyo resumen ya se mostró en esta misión
+let IN_SUMMARY=false;
+function startMission(){
+  SESSION_STAMP=Date.now();
+  SESSION=buildSession(); IDX=0; SESSION_XP=0; SESSION_FIRST=0; SESSION_TOTAL=0; INCHALLENGE=false; META_DONE=false;
+  SHOWN_SUMMARIES=[];
+  show('viewMission'); renderAct();
+}
+// Practicar un tema específico desde su pergamino: sesión filtrada por tema
+function startMissionTema(tema){
+  SESSION_STAMP=Date.now();
+  let acts;
+  if(tema==='kanji'){
+    acts=selectKanjiActs();
+    const extra=POOL.filter(a=>a.tema==='kanji'&&a.tipo!=='intro'&&kanjiActEnabled(a)&&weightFor(a)>0&&!acts.includes(a));
+    while(acts.length<6 && extra.length) acts.push(extra.shift());
+  } else {
+    acts=POOL.filter(a=>a.tema===tema).map(a=>({a,w:weightFor(a)})).sort((x,y)=>y.w-x.w).slice(0,8).map(x=>x.a);
+  }
+  if(!acts.length){ toast('Sin actividades'); return; }
+  const orbX=POOL.filter(a=>a.tema===tema && a.orb===3 && !acts.includes(a) && kanjiActEnabled(a) && weightFor(a)>0);
+  SESSION={acts, challenge: orbX.length?orbX[0]:null};
+  IDX=0;SESSION_XP=0;SESSION_FIRST=0;SESSION_TOTAL=0;INCHALLENGE=false;META_DONE=false;SHOWN_SUMMARIES=[];
+  show('viewMission'); renderAct();
+}
+// Tarjeta-resumen del tema antes de practicarlo
+function showTemaSummary(tema){
+  IN_SUMMARY=true;
+  const s=SCROLLS[tema];
+  const names={verbos:'Verbos',particulas:'Partículas',vocab:'Vocabulario',kanji:'Kanji',gramatica:'Gramática',lectura:'Lectura',principito:'El Principito'};
+  const total=SESSION.acts.length;
+  $('#progFill').style.width=(IDX/total*100)+'%';
+  $('#progLabel').textContent='Kata '+(IDX+1)+' / '+total;
+  $('#progTema').textContent=names[tema]||'';
+  $('#actCard').innerHTML=
+    '<div class="qtop"><span class="tema-tag tema-'+tema+'">'+(names[tema]||tema)+'</span>'+
+    '<span class="orb-tag">📌 Recordatorio</span></div>'+
+    '<div class="center" style="margin:10px 0 6px"><div style="font-size:34px">'+s.icon+'</div>'+
+    '<div style="font-weight:800;font-size:17px;margin-top:4px">'+s.title+'</div></div>'+
+    '<div style="font-size:14px;line-height:1.65;color:var(--ink);opacity:.92;margin:10px 4px 4px">'+s.resumen+'</div>'+
+    (s.body?'<div class="hintbox show" style="margin-top:12px">📜 ¿Querés la explicación completa? Está en los Pergaminos.</div>':'');
+  $('#mainAction').classList.remove('hidden');
+  $('#mainAction').textContent='わかった · Entendido, a practicar';
+}
+function curAct(){ 
+  if(INCHALLENGE) return SESSION.challenge;
+  return SESSION.acts[IDX];
+}
+function renderAct(){
+  ATTEMPT=0; CURSTATE=null;
+  const a=curAct();
+  // Resumen del tema (una vez por misión, si hay pergamino con resumen)
+  if(!INCHALLENGE && SCROLLS[a.tema] && SCROLLS[a.tema].resumen && !SHOWN_SUMMARIES.includes(a.tema)){
+    SHOWN_SUMMARIES.push(a.tema);
+    showTemaSummary(a.tema);
+    return;
+  }
+  IN_SUMMARY=false;
+  // Carta intro de kanji (nivel 0): presentación con mnemotecnia, sin evaluación
+  if(a.tipo==='intro'){ renderKanjiIntro(a); return; }
+  const total = SESSION.acts.length;
+  const shown = INCHALLENGE ? total : IDX;
+  $('#progFill').style.width = (INCHALLENGE?100:(IDX/total*100))+'%';
+  $('#progLabel').textContent = INCHALLENGE ? '🌌 Órbita X (opcional)' : ('Kata '+(IDX+1)+' / '+total);
+  const temaNames={verbos:'Verbos',particulas:'Partículas',vocab:'Vocabulario',kanji:'Kanji',gramatica:'Gramática',lectura:'Lectura',principito:'El Principito'};
+  $('#progTema').textContent = temaNames[a.tema]||'';
+
+  let orbDots = '●'.repeat(a.orb);
+  let html = '<div class="qtop">'+
+    '<span class="tema-tag tema-'+a.tema+'">'+(temaNames[a.tema]||a.tema)+'</span>'+
+    '<span class="orb-tag">Órbita <span class="orb-dot">'+orbDots+'</span></span></div>';
+  if(a.story) html+='<div class="story">'+a.story+'</div>';
+  html+='<div class="q">'+a.q+'</div>';
+
+  if(a.tipo==='mc'){
+    html+='<div class="opts" id="opts">';
+    a.opts.forEach((o,i)=>{ html+='<button class="opt" data-i="'+i+'" onclick="selOpt(this,'+i+')">'+o+'</button>'; });
+    html+='</div>';
+  } else if(a.tipo==='input'){
+    html+='<input class="inp" id="inpField" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="かな">';
+    html+='<div class="kanahint">Respondé en kana (hiragana/katakana)</div>';
+  } else if(a.tipo==='order'){
+    html+='<div class="slots" id="slots"></div><div class="bank" id="bank">';
+    a.chips.forEach((c,i)=>{ html+='<div class="chipword" data-i="'+i+'" onclick="placeChip(this)">'+c+'</div>'; });
+    html+='</div>';
+  } else if(a.tipo==='match'){
+    const left=a.pairs.map((p,i)=>({t:p[0],i}));
+    const right=a.pairs.map((p,i)=>({t:p[1],i})).sort(()=>Math.random()-.5);
+    html+='<div class="match-cols"><div class="mcol" id="mLeft">';
+    left.forEach(x=>{ html+='<div class="mitem" data-side="L" data-i="'+x.i+'" onclick="selMatch(this)">'+x.t+'</div>'; });
+    html+='</div><div class="mcol" id="mRight">';
+    right.forEach(x=>{ html+='<div class="mitem" data-side="R" data-i="'+x.i+'" onclick="selMatch(this)">'+x.t+'</div>'; });
+    html+='</div></div>';
+  } else if(a.tipo==='open'){
+    html+='<textarea class="ta" id="openField" placeholder="かなで書いてみて…"></textarea>';
+  }
+
+  if(a.hint){
+    html+='<button class="hintbtn" onclick="toggleHint()">💡 Ver pista (sin costo)</button>';
+    html+='<div class="hintbox" id="hintBox">'+a.hint+'</div>';
+  }
+  html+='<div class="fb" id="fb"></div>';
+  $('#actCard').innerHTML=html;
+
+  // reset action btn
+  const btn=$('#mainAction');
+  if(a.tipo==='match'){ btn.classList.add('hidden'); }
+  else { btn.classList.remove('hidden'); btn.textContent='確認 · Comprobar'; }
+  CURSTATE={selected:null, slots:[], matchSel:null, matchDone:0};
+}
+
+function toggleHint(){ $('#hintBox').classList.toggle('show'); }
+
+// ── Carta de presentación de kanji (nivel 0) ──
+let IN_INTRO=false, INTRO_KID=null;
+function renderKanjiIntro(a){
+  IN_INTRO=true; INTRO_KID=a.kanjiId;
+  const total=SESSION.acts.length;
+  $('#progFill').style.width=(IDX/total*100)+'%';
+  $('#progLabel').textContent='Kata '+(IDX+1)+' / '+total;
+  $('#progTema').textContent='Kanji nuevo';
+  $('#actCard').innerHTML=
+    '<div class="qtop"><span class="tema-tag tema-kanji">Kanji</span>'+
+    '<span class="orb-tag">🆕 Nueva técnica</span></div>'+
+    '<div class="kintro">'+
+      '<div class="kbig">'+a.kanji+'</div>'+
+      '<div class="kread">'+a.kana+' <span class="krom">· '+a.romaji+'</span></div>'+
+      '<div class="ksig">'+a.sig+'</div>'+
+    '</div>'+
+    '<div class="kmnemo"><div class="kmnemo-h">🧠 Cómo recordarlo</div>'+a.mnemo+'</div>'+
+    '<div class="kexample">📎 En contexto: <b>'+a.exW+'</b> <span class="krom">('+a.exK+')</span> — '+a.exM+'</div>';
+  $('#mainAction').classList.remove('hidden');
+  $('#mainAction').textContent='わかった · ¡Entendido!';
+}
+function finishKanjiIntro(){
+  IN_INTRO=false;
+  const kid=INTRO_KID;
+  P.kanjiLevel[kid]=1; // sube a nivel 1
+  P.kanjiStreak[kid]=0;
+  addXp(4); SESSION_XP+=4;
+  toast('⛩️ '+kanjiChar(kid)+' aprendido · +4 XP');
+  saveP();
+  IDX++;
+  if(IDX>=SESSION.acts.length){ if(SESSION.challenge) offerChallenge(); else endMission(); }
+  else renderAct();
+}
+function kanjiChar(kid){ const a=POOL.find(x=>x.kanjiId===kid&&x.kanji); return a?a.kanji:''; }
+
+// Escalera de dominio. Requiere 2 aciertos al primer intento en sesiones distintas para subir.
+function kanjiIdsOf(a){
+  if(a.kanjiId) return [a.kanjiId];
+  if(a.kanjiGroup) return a.kanjiGroup.slice();
+  return [];
+}
+let SESSION_STAMP = Date.now(); // identifica la sesión actual
+function kanjiProgress(a, firstTry){
+  const kids = kanjiIdsOf(a);
+  kids.forEach(kid=>{
+    const lv = kLevelOf(kid);
+    if(lv>=4){ return; } // dominado, mantenimiento
+    if(!firstTry){ P.kanjiStreak[kid]=0; return; } // acertó al 2º intento: no cuenta para subir, pero no baja
+    // acierto al primer intento
+    // contar solo una vez por sesión por kanji
+    const key='_lastSess_'+kid;
+    if(P[key]===SESSION_STAMP){ return; } // ya contó este kanji en esta sesión
+    P[key]=SESSION_STAMP;
+    P.kanjiStreak[kid]=(P.kanjiStreak[kid]>0?P.kanjiStreak[kid]:0)+1;
+    if(P.kanjiStreak[kid]>=2){
+      let nl=lv+1;
+      if(P.softKanji && nl>2) nl=2; // techo modo suave
+      P.kanjiLevel[kid]=Math.min(nl,4);
+      P.kanjiStreak[kid]=0;
+      if(P.kanjiLevel[kid]>=4) toast('🏆 '+kanjiChar(kid)+' ¡dominado!');
+      else toast('⬆️ '+kanjiChar(kid)+' subió a nivel '+P.kanjiLevel[kid]);
+    }
+  });
+}
+function kanjiDown(a){
+  const kids=kanjiIdsOf(a);
+  kids.forEach(kid=>{
+    const lv=kLevelOf(kid);
+    P.kanjiLevel[kid]=Math.max(1, lv-1); // nunca baja de 1 (ya vio la intro)
+    P.kanjiStreak[kid]=-1; // marca "atrasado": prioriza consolidar, frena nuevos
+  });
+}
+
+
+// MC
+function selOpt(el,i){
+  if(CURSTATE.locked) return;
+  document.querySelectorAll('#opts .opt').forEach(o=>o.classList.remove('sel'));
+  el.classList.add('sel'); CURSTATE.selected=i;
+}
+// Order
+function placeChip(el){
+  if(CURSTATE.locked) return;
+  if(el.classList.contains('placed')) return;
+  const slots=$('#slots'); const clone=el.cloneNode(true);
+  clone.classList.remove('placed');
+  clone.onclick=function(){ if(CURSTATE.locked)return; 
+    const idx=CURSTATE.slots.indexOf(el.dataset.i); if(idx>=0)CURSTATE.slots.splice(idx,1);
+    el.classList.remove('placed'); clone.remove(); };
+  slots.appendChild(clone); el.classList.add('placed');
+  CURSTATE.slots.push(el.dataset.i);
+}
+// Match
+function selMatch(el){
+  if(el.classList.contains('done'))return;
+  const side=el.dataset.side, i=el.dataset.i;
+  if(!CURSTATE.matchSel){
+    document.querySelectorAll('.mitem.sel').forEach(x=>x.classList.remove('sel'));
+    el.classList.add('sel'); CURSTATE.matchSel={side,i,el};
+  } else {
+    if(CURSTATE.matchSel.side===side){
+      document.querySelectorAll('.mitem.sel').forEach(x=>x.classList.remove('sel'));
+      el.classList.add('sel'); CURSTATE.matchSel={side,i,el}; return;
+    }
+    // distinto lado: comparar i
+    if(CURSTATE.matchSel.i===i){
+      el.classList.add('done'); CURSTATE.matchSel.el.classList.remove('sel'); CURSTATE.matchSel.el.classList.add('done');
+      CURSTATE.matchDone++;
+      const r=el.getBoundingClientRect(); sparks(r.left+r.width/2,r.top+r.height/2);
+      CURSTATE.matchSel=null;
+      const a=curAct();
+      if(CURSTATE.matchDone===a.pairs.length){
+        // completado
+        grade(true, a);
+      }
+    } else {
+      el.classList.add('err'); const bad=CURSTATE.matchSel.el;
+      setTimeout(()=>{ el.classList.remove('err','sel'); bad.classList.remove('sel'); },350);
+      CURSTATE.matchSel=null;
+    }
+  }
+}
+
+function onAction(){
+  if(IN_SUMMARY){ IN_SUMMARY=false; renderAct(); return; }
+  if(IN_INTRO){ finishKanjiIntro(); return; }
+  const a=curAct();
+  if(CURSTATE.locked){ nextAct(); return; }
+  let correct=false, given='';
+  if(a.tipo==='mc'){
+    if(CURSTATE.selected==null){ toast('Elegí una opción'); return; }
+    correct = CURSTATE.selected===a.correct;
+    // pintar
+    document.querySelectorAll('#opts .opt').forEach((o,i)=>{
+      o.onclick=null;
+      if(i===a.correct) o.classList.add('correct');
+      if(i===CURSTATE.selected && !correct) o.classList.add('wrong');
+    });
+  } else if(a.tipo==='input'){
+    given=$('#inpField').value;
+    const ok = a.variants.some(v=>normKana(v)===normKana(given));
+    correct=ok;
+    $('#inpField').classList.add(ok?'correct':'wrong');
+  } else if(a.tipo==='order'){
+    const arr=CURSTATE.slots.map(i=>a.chips[i]);
+    correct = JSON.stringify(arr)===JSON.stringify(a.correcta);
+  } else if(a.tipo==='open'){
+    given=$('#openField').value.trim();
+    // nunca se califica
+    if(given){ P.notes.push({d:todayStr(),q:a.q,a:given}); }
+    finishOpen(a,given); return;
+  }
+  grade(correct,a,given);
+}
+
+function grade(correct,a,given){
+  const fb=$('#fb');
+  const first = ATTEMPT===0;
+  if(correct){
+    CURSTATE.locked=true;
+    let xp = first?10:(ATTEMPT===1?6:3);
+    if(INCHALLENGE) xp=25;
+    SESSION_XP+=xp; addXp(xp);
+    SESSION_TOTAL++; if(first&&!INCHALLENGE) SESSION_FIRST++;
+    // registrar resultado
+    if(!INCHALLENGE) P.res[a.id] = first?1:(ATTEMPT===1?0.5:0);
+    logAct(a, first?1:0.5);
+    // Escalera de kanji: subir nivel si acierta al primer intento
+    if(a.tema==='kanji' && !INCHALLENGE) kanjiProgress(a, first);
+    // badges
+    checkBadges(a,true);
+    fb.className='fb ok show';
+    fb.innerHTML='<div class="fbh">⚔️ 正解！ ¡Correcto! +'+xp+' XP</div>'+(a.ex?'<div class="ex">'+a.ex+'</div>':'');
+    const r=$('#actCard').getBoundingClientRect(); sparks(r.left+r.width/2, r.top+120);
+    $('#mainAction').textContent='次へ · Siguiente';
+    $('#mainAction').classList.remove('hidden');
+  } else {
+    if(ATTEMPT===0){
+      ATTEMPT=1;
+      fb.className='fb no show';
+      fb.innerHTML='<div class="fbh">🌀 まだまだ… Casi. Probá una vez más.</div><div class="ex">Equivocarse también entrena el cerebro. Tenés un intento más.</div>';
+      // permitir reintento
+      if(a.tipo==='mc'){
+        document.querySelectorAll('#opts .opt').forEach(o=>{ o.classList.remove('wrong','sel'); o.onclick=function(){selOpt(this,parseInt(this.dataset.i));}; });
+        CURSTATE.selected=null;
+      } else if(a.tipo==='input'){
+        $('#inpField').classList.remove('wrong'); $('#inpField').value='';
+      } else if(a.tipo==='order'){
+        // reset slots
+        CURSTATE.slots=[]; $('#slots').innerHTML='';
+        document.querySelectorAll('#bank .chipword').forEach(c=>c.classList.remove('placed'));
+      }
+    } else {
+      // revelar
+      CURSTATE.locked=true;
+      SESSION_TOTAL++;
+      if(!INCHALLENGE) P.res[a.id]=0;
+      logAct(a,0);
+      // Escalera de kanji: bajar un nivel al revelar
+      if(a.tema==='kanji' && !INCHALLENGE) kanjiDown(a);
+      let rev='';
+      if(a.tipo==='input') rev='Respuesta: <b>'+a.variants[0]+'</b>. ';
+      if(a.tipo==='order') rev='Orden correcto: <b>'+a.correcta.join(' / ')+'</b>. ';
+      if(a.tipo==='mc'){
+        document.querySelectorAll('#opts .opt').forEach((o,i)=>{ if(i===a.correct)o.classList.add('correct'); o.onclick=null; });
+      }
+      addXp(3); SESSION_XP+=3;
+      fb.className='fb no show';
+      fb.innerHTML='<div class="fbh">🕯️ Se revela la técnica (+3 XP)</div><div class="ex">'+rev+(a.ex||'')+'</div>';
+      $('#mainAction').textContent='次へ · Siguiente';
+      $('#mainAction').classList.remove('hidden');
+    }
+  }
+}
+
+function finishOpen(a,given){
+  CURSTATE.locked=true;
+  addXp(8); SESSION_XP+=8; SESSION_TOTAL++;
+  logAct(a,1);
+  if(a.tema==='principito') giveBadge('principito');
+  const fb=$('#fb');
+  fb.className='fb ok show';
+  fb.innerHTML='<div class="fbh">🪷 +8 XP · Toda reflexión suma</div>'+
+    (a.modelo?'<div class="ex"><b>Respuesta modelo:</b><br>'+a.modelo+'</div>':'');
+  $('#mainAction').textContent='次へ · Siguiente';
+  $('#mainAction').classList.remove('hidden');
+}
+
+function nextAct(){
+  if(INCHALLENGE){ endMission(); return; }
+  IDX++;
+  if(IDX>=SESSION.acts.length){
+    // ofrecer challenge
+    if(SESSION.challenge){ offerChallenge(); }
+    else endMission();
+  } else renderAct();
+}
+
+function offerChallenge(){
+  $('#actCard').innerHTML =
+    '<div class="center" style="padding:14px 4px">'+
+    '<div style="font-size:44px;margin-bottom:6px">🌌</div>'+
+    '<div class="q" style="text-align:center">Desafío <b>Órbita X</b><br><span style="font-size:14px;color:var(--dim)">Más difícil · +25 XP · podés saltarlo sin penalidad</span></div>'+
+    '<button class="btn primary" onclick="doChallenge()" style="margin-bottom:10px">⚔️ Aceptar el desafío</button>'+
+    '<button class="btn ghost small" onclick="askMeta()">Saltar y terminar</button>'+
+    '</div>';
+  $('#mainAction').classList.add('hidden');
+}
+function doChallenge(){ INCHALLENGE=true; $('#mainAction').classList.remove('hidden'); renderAct(); }
+
+function askMeta(){
+  if(META_DONE){ endMission(); return; }
+  $('#progFill').style.width='100%';
+  $('#progLabel').textContent='Reflexión final';
+  $('#progTema').textContent='';
+  $('#actCard').innerHTML =
+    '<div class="qtop"><span class="tema-tag" style="color:var(--purple-glow);border-color:rgba(167,139,250,.4)">Metacognición</span></div>'+
+    '<div class="q">¿Cómo te sentiste con esta misión?</div>'+
+    '<div class="opts">'+
+    ['💪 Fácil, quiero más','🎯 Justo bien','🌀 Me costó, pero avancé','😮‍💨 Difícil hoy']
+      .map(o=>'<button class="opt" onclick="metaPick(this)">'+o+'</button>').join('')+
+    '</div>'+
+    '<div class="small-dim mt center">No hay respuestas incorrectas. +5 XP por reflexionar.</div>';
+  $('#mainAction').classList.add('hidden');
+}
+function metaPick(el){
+  document.querySelectorAll('#actCard .opt').forEach(o=>o.onclick=null);
+  el.classList.add('correct');
+  P.notes.push({d:todayStr(),q:'Metacognición',a:el.textContent});
+  addXp(5); SESSION_XP+=5; META_DONE=true;
+  setTimeout(endMission,450);
+}
+
+function endMission(){
+  if(!META_DONE){ askMeta(); return; }
+  // registrar dia + sesion
+  const t=todayStr();
+  if(!P.days.includes(t)) P.days.push(t);
+  const pct = SESSION_TOTAL? Math.round(SESSION_FIRST/SESSION.acts.length*100):0;
+  let stars = pct>=90?3:(pct>=60?2:1);
+  P.sessions.push({d:t,xp:SESSION_XP,stars,first:SESSION_FIRST,total:SESSION.acts.length});
+  giveBadge('first');
+  // rachas
+  const s=streakCount();
+  if(s>=3) giveBadge('streak3');
+  if(s>=7) giveBadge('streak7');
+  saveP();
+  // pantalla
+  $('#resStars').textContent = '★'.repeat(stars)+'☆'.repeat(3-stars);
+  $('#resTitle').textContent = stars===3?'お見事！ ¡Impecable!':stars===2?'よくやった！ ¡Bien hecho!':'完了！ Misión cumplida';
+  $('#resXp').textContent = '+'+SESSION_XP+' XP';
+  const rk=rankFor(P.xp);
+  $('#resMsg').innerHTML = 'Acertaste al primer intento: <b>'+SESSION_FIRST+'/'+SESSION.acts.length+'</b><br>Rango actual: <b>'+rk.jp+' · '+rk.es+'</b>';
+  show('viewResult');
+  const r=$('#viewResult').getBoundingClientRect(); setTimeout(()=>sparks(window.innerWidth/2,180),150);
+}
+
+// ═══════════════ XP / LOG / BADGES ═══════════════
+function addXp(n){ P.xp+=n; $('#xpN').textContent=P.xp; }
+function logAct(a,res){ P.log.push({d:todayStr(),aid:a.id,tema:a.tema,tipo:a.tipo,orb:a.orb,res}); }
+function streakCount(){
+  if(!P.days.length) return 0;
+  const set=new Set(P.days); let c=0; let d=new Date();
+  // si hoy no jugó aún, empezar desde ayer permitido
+  for(let i=0;i<400;i++){
+    const s=d.toISOString().slice(0,10);
+    if(set.has(s)) c++;
+    else if(i===0){ /* hoy sin jugar: seguir desde ayer */ }
+    else break;
+    d.setDate(d.getDate()-1);
+  }
+  return c;
+}
+function giveBadge(id){ if(!P.badges.includes(id)){ P.badges.push(id); const b=BADGES.find(x=>x.id===id); if(b) toast(b.ic+' Insignia: '+b.name); } }
+function checkBadges(a,ok){
+  if(a.tema==='verbos'){
+    const vcorrect = P.log.filter(l=>l.tema==='verbos'&&l.res>0).length;
+    if(vcorrect>=20) giveBadge('verbos20');
+  }
+  if(a.err && ok){ P.errCount=(P.errCount||0)+1; if(P.errCount>=3) giveBadge('errhunter'); }
+  if(INCHALLENGE && ok) giveBadge('orbitax');
+  if(a.tema==='principito' && ok) giveBadge('principito');
+}
+
+// ═══════════════ RENDER HOME ═══════════════
+function renderHome(){
+  $('#xpN').textContent=P.xp;
+  const s=streakCount();
+  $('#streakN').textContent=s;
+  $('#hbStreakN').textContent=s+'d';
+  $('#hbStreak').style.setProperty('--w',Math.min(s/7*100,100)+'%');
+  $('#hbStreak').style.width=Math.min(s/7*100,100)+'%';
+  const seen=Object.keys(P.res).length;
+  const mastered=Object.values(P.res).filter(v=>v===1).length;
+  const mastery=POOL.length?Math.round(mastered/POOL.length*100):0;
+  $('#hbMastery').style.width=mastery+'%';
+  $('#hbMasteryN').textContent=mastery+'%';
+  $('#poolCount').textContent=POOL.length;
+  $('#seenCount').textContent=seen;
+  const rk=rankFor(P.xp);
+  $('#rankBadge').textContent=rk.jp+' · '+rk.es;
+  // greet por hora
+  const h=new Date().getHours();
+  const g = h<12?'おはよう、Dami。':h<19?'こんにちは、Dami。':'こんばんは、Dami。';
+  $('#greet').textContent=g+' Entrená como quien entrena artes marciales:';
+  // badges
+  $('#badgeWrap').innerHTML = BADGES.map(b=>{
+    const has=P.badges.includes(b.id);
+    return '<span class="bdg'+(has?'':' locked')+'">'+b.ic+' '+b.name+'</span>';
+  }).join('');
+}
+
+// ═══════════════ RENDER STATS ═══════════════
+function renderStats(){
+  const temas=['verbos','particulas','vocab','kanji','gramatica','lectura','principito'];
+  const colors={verbos:'#a78bfa',particulas:'#22d3ee',vocab:'#34d399',kanji:'#fbbf24',gramatica:'#fb7185',lectura:'#60a5fa',principito:'#f0abfc'};
+  let bars='';
+  temas.forEach(t=>{
+    const logs=P.log.filter(l=>l.tema===t);
+    if(!logs.length){ return; }
+    const first=logs.filter(l=>l.res===1).length;
+    const pct=Math.round(first/logs.length*100);
+    bars+='<div class="bar-row"><span class="lbl">'+t+'</span>'+
+      '<div class="track"><i style="width:'+pct+'%;background:'+colors[t]+'"></i></div>'+
+      '<span class="pct" style="color:'+colors[t]+'">'+pct+'%</span></div>';
+  });
+  $('#statBars').innerHTML = bars || '<p class="mini-note">Completá una misión para ver tus estadísticas.</p>';
+
+  // por orbita
+  let orb='';
+  [1,2,3].forEach(o=>{
+    const logs=P.log.filter(l=>l.orb===o);
+    const first=logs.filter(l=>l.res===1).length;
+    const pct=logs.length?Math.round(first/logs.length*100):0;
+    const names={1:'Órbita 1 · Base',2:'Órbita 2 · Aplicación',3:'Órbita 3 · Razonamiento'};
+    orb+='<div class="bar-row"><span class="lbl" style="width:132px">'+names[o]+'</span>'+
+      '<div class="track"><i style="width:'+pct+'%;background:linear-gradient(90deg,#8b5cf6,#22d3ee)"></i></div>'+
+      '<span class="pct">'+pct+'%</span></div>';
+  });
+  $('#statOrb').innerHTML=orb;
+
+  // ultimos 7 dias
+  let days='';
+  for(let i=6;i>=0;i--){
+    const d=new Date(); d.setDate(d.getDate()-i);
+    const s=d.toISOString().slice(0,10);
+    const n=P.log.filter(l=>l.d===s).length;
+    const dn=['D','L','M','M','J','V','S'][d.getDay()];
+    const h=Math.min(n*7,60);
+    days+='<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">'+
+      '<div style="width:100%;max-width:26px;height:'+Math.max(h,4)+'px;border-radius:6px;background:'+(n?'linear-gradient(180deg,#a78bfa,#6d28d9)':'var(--panel2)')+'"></div>'+
+      '<span style="font-size:10px;color:var(--dim)">'+dn+'</span>'+
+      '<span style="font-size:10px;color:'+(n?'#a78bfa':'var(--dim)')+';font-weight:700">'+n+'</span></div>';
+  }
+  $('#statDays').innerHTML='<div style="display:flex;gap:6px;align-items:flex-end;height:80px">'+days+'</div>';
+
+  // Grid de dominio de kanji
+  const kanjiCards = POOL.filter(a=>a.tema==='kanji'&&a.kanji&&a.kanjiId);
+  const seen={};
+  const cells = kanjiCards.filter(a=>{ if(seen[a.kanjiId])return false; seen[a.kanjiId]=1; return true; })
+    .map(a=>{
+      const lv=P.kanjiLevel[a.kanjiId]!==undefined?P.kanjiLevel[a.kanjiId]:0;
+      const lvCol={0:'#8b96b0',1:'#fb7185',2:'#fbbf24',3:'#22d3ee',4:'#34d399'}[lv];
+      return '<div class="kcell l'+lv+'">'+a.kanji+'<span class="lv" style="background:'+lvCol+';color:#0a0e1a">'+lv+'</span></div>';
+    }).join('');
+  const mastered=Object.values(P.kanjiLevel).filter(v=>v>=4).length;
+  $('#statKanji').innerHTML='<div class="mini-note">Dominados (nivel 4): <b>'+mastered+'</b> / '+Object.keys(seen).length+
+    '</div><div class="kgrid">'+cells+'</div>'+
+    '<div class="mini-note mt" style="font-size:11px">Niveles: 0 nuevo · 1 significado · 2 lectura · 3 producción · 4 dominado</div>';
+
+  // reflexiones
+  const notes=P.notes.slice().reverse().slice(0,12);
+  if(notes.length){
+    $('#statOpen').innerHTML=notes.map(n=>
+      '<div class="openlog"><div class="ol-q">'+n.d+' · '+String(n.q).replace(/<[^>]+>/g,'').slice(0,50)+'…</div><div class="ol-a">'+esc(n.a)+'</div></div>'
+    ).join('');
+  }
+}
+function esc(s){return String(s).replace(/[<>&]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[c]))}
+
+// ═══════════════ MORE ═══════════════
+function renderMore(){
+  $('#pName').textContent=P.name; $('#pXp').textContent=P.xp;
+  $('#pStreak').textContent=streakCount();
+  const rk=rankFor(P.xp); $('#pRank').textContent=rk.jp+' · '+rk.es;
+  $('#softToggle').classList.toggle('on', !!P.softKanji);
+}
+function toggleSoft(){
+  P.softKanji=!P.softKanji;
+  $('#softToggle').classList.toggle('on', P.softKanji);
+  // si activo el modo suave, bajo a 2 los kanji que estén en 3-4
+  if(P.softKanji){
+    Object.keys(P.kanjiLevel).forEach(kid=>{ if(P.kanjiLevel[kid]>2) P.kanjiLevel[kid]=2; });
+  }
+  saveP();
+  toast(P.softKanji?'Modo kanji suave activado':'Modo kanji suave desactivado');
+}
+function exportData(){
+  const blob=new Blob([JSON.stringify(P,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob); const a=document.createElement('a');
+  a.href=url; a.download='kage-dojo-respaldo-'+todayStr()+'.json'; a.click();
+  URL.revokeObjectURL(url); toast('Respaldo exportado');
+}
+function importData(ev){
+  const f=ev.target.files[0]; if(!f)return;
+  const r=new FileReader(); r.onload=()=>{ try{ P=JSON.parse(r.result); saveP(); toast('Progreso importado'); renderHome(); show('viewHome'); }catch(e){ toast('Archivo inválido'); } };
+  r.readAsText(f);
+}
+function resetAll(){
+  if(confirm('¿Borrar TODO tu progreso? No se puede deshacer.')){
+    P={name:'Dami',av:'⛩️',xp:0,days:[],badges:[],log:[],notes:[],sessions:[],res:{},errCount:0,kanjiLevel:{},kanjiStreak:{},softKanji:false};
+    saveP(); toast('Progreso borrado'); show('viewHome');
+  }
+}
+
+// ═══════════════ INIT ═══════════════
+renderHome();
+show('viewHome');
+</script>
+</body>
+</html>
